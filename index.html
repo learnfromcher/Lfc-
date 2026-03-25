@@ -1397,13 +1397,24 @@ Hero: linear-gradient(135deg, #1A2E35 0%, #0F3040 100%) with all 4 CHER pills (s
   }
 
   const syllabusStep = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 0 — READ SYLLABUS FIRST (MANDATORY)
+MANDATORY PRE-BUILD READS — DO THESE BEFORE WRITING ANY CONTENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Before writing ANY content, read the SEAB syllabus PDF:
-  Combined: /mnt/project/5086_y26_sy_comb_chem.pdf
-Extract the exact Learning Outcomes for Topic ${topic.n}: ${topic.name} verbatim.
-Do NOT rely on memory or the LOs listed below alone — verify against the PDF.
-Only proceed to build after confirming full LO coverage.
+STEP 0a — Read MASTER INSTRUCTIONS:
+  /mnt/project/MASTER_INSTRUCTIONS_v3_2.pdf
+  This is the authoritative source for ALL content, brand, colour, and format rules.
+  Read ALL relevant sections before writing anything.
+
+STEP 0b — Read UNIVERSAL PATCH PROMPT:
+  /mnt/project/learnfromcher_UniversalPatchPrompt_v1.pdf
+  Apply ALL rules (Steps 1–6, R1–R7) to every file you build.
+
+STEP 0c — Read SEAB SYLLABUS PDF:
+  /mnt/project/5086_y26_sy_comb_chem.pdf
+  Extract exact LOs for Topic ${topic.n}: ${topic.name} verbatim.
+  SYLLABUS OVERRIDES master instructions where they conflict.
+  Do NOT rely on memory or dashboard LOs alone — verify against the PDF.
+
+Only proceed to build after completing ALL THREE reads.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
   return syllabusStep + specific;
@@ -1726,13 +1737,24 @@ Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${
   }
 
   const syllabusStep = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 0 — READ SYLLABUS FIRST (MANDATORY)
+MANDATORY PRE-BUILD READS — DO THESE BEFORE WRITING ANY CONTENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Before writing ANY content, read the SEAB syllabus PDF:
-  Combined: /mnt/project/5086_y26_sy_comb_chem.pdf
-Extract the exact Learning Outcomes for Topic ${topic.n}: ${topic.name} verbatim.
-Do NOT rely on memory or the LOs listed below alone — verify against the PDF.
-Only proceed to build after confirming full LO coverage.
+STEP 0a — Read MASTER INSTRUCTIONS:
+  /mnt/project/MASTER_INSTRUCTIONS_v3_2.pdf
+  This is the authoritative source for ALL content, brand, colour, and format rules.
+  Read ALL relevant sections before writing anything.
+
+STEP 0b — Read UNIVERSAL PATCH PROMPT:
+  /mnt/project/learnfromcher_UniversalPatchPrompt_v1.pdf
+  Apply ALL rules (Steps 1–6, R1–R7) to every file you build.
+
+STEP 0c — Read SEAB SYLLABUS PDF:
+  /mnt/project/5086_y26_sy_comb_chem.pdf
+  Extract exact LOs for Topic ${topic.n}: ${topic.name} verbatim.
+  SYLLABUS OVERRIDES master instructions where they conflict.
+  Do NOT rely on memory or dashboard LOs alone — verify against the PDF.
+
+Only proceed to build after completing ALL THREE reads.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
   return syllabusStep + specific;
