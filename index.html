@@ -703,7 +703,7 @@ function getAssessStatus(id) {
 function setStatus(topicN, fileN, status) {
   const k = `${topicN}_${fileN}`;
   // T3 is always gold — cannot be changed
-  if (topicN === 3) { state[k] = 'gold'; saveState(); return; }
+  if (String(topicN) === '3') { state[k] = 'gold'; saveState(); return; }
   // F0,F1,F2,F5,F6 are permanently done for all topics — cannot be downgraded
   if ([1,2,5,6].includes(fileN) && status === 'not') return;
   state[k] = status;
@@ -2333,7 +2333,7 @@ function renderGrid() {
       if (!anyMatch) continue;
     }
 
-    const isGold = topic.n === 3;
+    const isGold = String(topic.n) === '3';
     const topicDone = FILES.filter(f=>f.type!=='skip').filter(f=>{const s=getStatus(topic.n,f.n);return s==='done'||s==='gold';}).length;
     const topicTotal = FILES.filter(f=>f.type!=='skip').length;
 
@@ -2359,7 +2359,7 @@ function renderGrid() {
       td.dataset.file = file.n;
 
       const labels = { not:'Not Started', prog:'In Progress', done:'Done ✓', gold:'Gold Standard ⭐' };
-      td.innerHTML = `<button class="cell-btn" onclick="openModal(${topic.n},${file.n})">
+      td.innerHTML = `<button class="cell-btn" onclick="openModal('${topic.n}',${file.n})">
         <span class="cell-icon">${file.icon}</span>
         <span class="cell-label">${file.short}</span>
         <span class="cell-status">${labels[status]||'—'}</span>
@@ -2410,7 +2410,7 @@ function renderCCGrid() {
       td.dataset.ccfile = ccFile.n;
 
       const labels = { not:'Not Started', prog:'In Progress', done:'Done ✓' };
-      td.innerHTML = `<button class="cell-btn" onclick="openCCModal(${topic.n},${ccFile.n})">
+      td.innerHTML = `<button class="cell-btn" onclick="openCCModal('${topic.n}',${ccFile.n})">
         <span class="cell-icon">${ccFile.icon}</span>
         <span class="cell-label">${ccFile.short}</span>
         <span class="cell-status">${labels[status]||'—'}</span>
@@ -2598,7 +2598,7 @@ function renderModalBody() {
 }
 
 function renderStatusBtns(topicN, fileN) {
-  if (topicN === 3) {
+  if (String(topicN) === '3') {
     document.getElementById('statusBtns').innerHTML = `<span style="font-size:12px;color:var(--amber);font-weight:700;">⭐ Gold Standard — T3 locked as Done</span>`;
     return;
   }
