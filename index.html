@@ -93,7 +93,7 @@ body{font-family:'DM Sans',sans-serif;background:#F0F4F8;color:var(--dark);min-h
 
 /* ── COLUMN HEADERS ── */
 .col-hdr{background:var(--dark);color:#fff;font-size:11px;font-weight:700;padding:10px 8px;text-align:center;letter-spacing:.3px;white-space:nowrap;border-bottom:2px solid var(--teal);position:sticky;top:58px;z-index:100;}
-.col-hdr:first-child{text-align:left;padding-left:14px;min-width:200px;border-radius:10px 0 0 0;}
+.col-hdr:first-child{text-align:left;padding-left:14px;min-width:200px;border-radius:10px 0 0 0;position:sticky;left:0;z-index:150;}
 .col-hdr:last-child{border-radius:0 10px 0 0;}
 .col-hdr .file-num{font-size:16px;display:block;margin-bottom:2px;}
 .col-hdr .file-type{font-size:9px;color:#90CDF4;display:block;font-family:'DM Mono',monospace;}
@@ -102,11 +102,11 @@ body{font-family:'DM Sans',sans-serif;background:#F0F4F8;color:var(--dark);min-h
 .col-hdr.f-html .file-num{color:#9AE6B4;}
 
 /* ── TOPIC HEADER CELLS ── */
-.topic-hdr{background:var(--white);border-bottom:1px solid var(--border);border-right:2px solid var(--teal-lt);padding:10px 14px;font-size:13px;font-weight:700;color:var(--dark);vertical-align:middle;min-width:200px;position:relative;}
+.topic-hdr{background:var(--white);border-bottom:1px solid var(--border);border-right:2px solid var(--teal-lt);padding:10px 14px;font-size:13px;font-weight:700;color:var(--dark);vertical-align:middle;min-width:200px;position:sticky;left:0;z-index:50;}
 .topic-hdr:hover{background:var(--teal-lt);}
 .topic-num{display:inline-block;background:var(--teal);color:#fff;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:800;text-align:center;line-height:22px;margin-right:8px;flex-shrink:0;}
 .topic-gold .topic-num{background:linear-gradient(135deg,#F6D860,#ECC000);}
-.topic-gold{background:linear-gradient(90deg,#FFFBEB,#fff) !important;}
+.topic-gold{background:linear-gradient(90deg,#FFFBEB,#fff) !important;}.topic-gold .topic-hdr{background:#FFFBEB;}
 .gold-star{font-size:13px;margin-left:4px;}
 .topic-progress{font-size:10px;color:var(--light);font-family:'DM Mono',monospace;margin-top:3px;padding-left:30px;}
 
@@ -466,26 +466,37 @@ const TOPICS = [
     common:["Saying 'gains oxygen = reduced' — it's OXIDISED","Confusing OIL RIG — writing it backwards","Saying KI turns blue (it's starch that turns blue, KI itself turns brown/colourless)","Forgetting acidified KMnO₄ colour change: purple to colourless"],
     starred:["OIL RIG: Oxidation Is Loss (of electrons), Reduction Is Gain","Oxidation: gain O / lose H / lose electrons","KMnO₄: purple → colourless (acts as oxidising agent)","KI: colourless → brown (I₂ formed; KI is reducing agent)"]
   },
-  { n:9, name:"Periodic Table & Reactivity Series",
+  { n:'9a', name:"Periodic Trends & Group Properties",
     los:[
-      "PT arranged by increasing proton number",
-      "Position related to proton number and electronic configuration",
-      "Group similarities explained by electronic configuration",
-      "Metallic → non-metallic left to right across a period",
-      "Valence electrons related to metallic/non-metallic character",
-      "Group 1 (Li, Na, K): soft, low density; melting point trend; reaction with water",
-      "Group 17 (Cl, Br, I): diatomic; colour and state trend; displacement reactions with halide ions",
-      "Group 18: lack of reactivity explained by electronic configurations",
-      "Order K, Na, Ca, Mg, Zn, Fe, Pb, (H), Cu, Ag: reactions with water/steam/dilute HCl",
-      "Deduce reactivity order from experimental results",
-      "Ease of extraction from ores linked to reactivity series",
-      "Rusting: requires O₂ AND water; prevention by barrier — painting, greasing, plastic coating"
+      "PT arranged by increasing proton number; period = number of electron shells; group = number of valence electrons",
+      "Explain same-group chemical similarities by same number of valence electrons",
+      "Describe metallic → non-metallic trend across a period; relate to valence electrons",
+      "Group 1 (Li, Na, K): soft, low density; m.p. trend; reactions with water; 5-step reactivity increase explanation",
+      "Group 17 (Cl, Br, I): diatomic; colour and state trend; m.p./b.p. trend (van der Waals); displacement reactions",
+      "Group 17 water: dissolves in water — NEVER 'reacts with water'; solubility decreases down group",
+      "Group 18: unreactivity explained by full outer shell; 4 applications (Ar welding, Ar bulbs, He balloons, Ne signs)"
     ],
-    sg:["Iron railings in HDB estates rust — require barrier protection (painting)","Aluminium used in MRT trains — lower in reactivity series than iron, forms protective oxide layer","Gold and silver used in Singapore jewellery — very low reactivity, found native (unreactive)","Magnesium used in emergency flares on ships (MPA) — very reactive"],
-    diagrams:["Periodic table position diagram (period = electron shells, group = valence electrons)","Reactivity series diagram (K to Ag with reactions listed)"],
-    graphs:["Reactivity trend graphs: Group 1 reactivity increases down group; Group 17 reactivity decreases down group"],
-    common:["Confusing group number with period number","Saying 'more reactive because more protons' — incorrect; must explain shielding and distance from nucleus","Forgetting rusting requires BOTH O₂ AND water (not just water)","Confusing displacement with precipitation"],
-    starred:["Reactivity series: K > Na > Ca > Mg > Zn > Fe > Pb > (H) > Cu > Ag","Rusting requires O₂ AND water — both must be present","Group 1: reactivity increases DOWN group","Group 17: reactivity DECREASES down group","Metals above H in series displace H₂ from dilute acid"]
+    sg:["Aluminium used in MRT trains — Period 3 metal, forms protective oxide layer","Sodium-vapour lamps in older Singapore estates — Group 1 element","Chlorine used in NEWater disinfection — Group 17 chemistry","Noble gas neon used in Singapore signage — unreactive, safe"],
+    diagrams:["Periodic table position diagram (period = shells, group = valence electrons)","Group 1 and Group 17 trend tables"],
+    graphs:["Group 1 reactivity trend down group","Group 17 m.p./b.p. trend down group"],
+    common:["Confusing group number with period number","Group 17 water: NEVER 'reacts with water' — say 'dissolves in water'","Forgetting all 4 noble gas applications — Ar (welding), Ar (bulbs), He (balloons), Ne (signs)","Incomplete 5-step Group 1 reactivity explanation — must include shielding"],
+    starred:["Group 1 reactivity (5 steps): more shells → outer e⁻ further → greater shielding → weaker nuclear attraction → outer e⁻ lost more easily","Group 17 m.p./b.p.: larger molecules → stronger van der Waals forces → higher m.p./b.p.","Group 17 water: 'dissolves in water; solubility decreases down group' — NEVER 'reacts'","Noble gases: Ar (welding) · Ar (bulbs) · He (balloons) · Ne (signs) — all 4 required","Group 17 displacement: more reactive halogen displaces less reactive from solution"]
+  },
+  { n:'9b', name:"Reactivity Series, Extraction & Rusting",
+    los:[
+      "Reactivity series: K, Na, Ca, Mg, Al, C, Zn, Fe, Pb, (H), Cu, Ag, Au — reactions with water/steam/dilute HCl",
+      "Deduce reactivity order from experimental observations",
+      "Carbon between Mg and Zn — non-metal, extraction reference only",
+      "Ease of extraction from ores linked to position in reactivity series",
+      "Displacement reactions: more reactive metal displaces less reactive from solution",
+      "Rusting: requires BOTH O₂ AND water — neither alone is sufficient",
+      "Rusting prevention: barrier methods (painting, greasing, plastic coating, electroplating, galvanising)"
+    ],
+    sg:["Iron railings in HDB estates rust — require barrier protection (painting, galvanising)","Aluminium MRT trains — reactive but protected by oxide layer; does not rust like iron","Gold and silver in Singapore jewellery — very low reactivity, found native","Galvanised zinc coating on steel structures — barrier + more reactive than iron"],
+    diagrams:["Reactivity series diagram (K to Au with reactions listed)","Rusting prevention methods comparison table"],
+    graphs:["None required"],
+    common:["Rusting requires BOTH O₂ AND water — not just water or just oxygen alone","Mnemonic: Please Stop Calling Me A Cute Zebra, I Love Hot Chocolate So Good","Carbon is a non-metal in the series — for extraction reference only, NOT a metal","Confusing displacement with precipitation"],
+    starred:["Mnemonic: 'Please Stop Calling Me A Cute Zebra, I Love Hot Chocolate So Good' (K,Na,Ca,Mg,Al,C,Zn,Fe,Pb,H,Cu,Ag,Au)","Rusting: BOTH O₂ AND water required — neither alone is sufficient","Carbon between Mg and Zn — non-metal, extraction reference only","Displacement: more reactive metal displaces less reactive from solution","Metals below carbon in series extracted by reduction with carbon"]
   },
   { n:10, name:"Chemical Energetics",
     los:[
@@ -510,32 +521,51 @@ const TOPICS = [
     common:["Saying 'more collisions' without adding 'more SUCCESSFUL collisions'","Forgetting activation energy context in collision theory — 'sufficient energy to react'","Saying rate increases because 'particles move faster' without mentioning collision frequency","Confusing rate with yield — rate changes, not total product"],
     starred:["Rate increases → more frequent AND more energetic (successful) collisions","Concentration/pressure: more particles per unit volume → more frequent collisions","Temperature: more kinetic energy → more frequent AND more energetic collisions","Particle size: greater surface area → more collisions per unit time"]
   },
-  { n:12, name:"Organic Chemistry",
+  { n:'12a', name:"Organic Chemistry — Alkanes & Alkenes",
     los:[
       "Natural gas (mainly methane) and crude oil as non-renewable energy sources",
-      "Crude oil = mixture of hydrocarbons; fractional distillation → fractions used as fuels and chemicals",
-      "Biofuel (bioethanol from sugarcane) as renewable alternative; more sustainable",
+      "Crude oil = mixture of hydrocarbons; fractional distillation → 7 fractions (mnemonic: Peter Parker Never Kicks Dirty Little Boys)",
+      "Biofuel (bioethanol from sugarcane) as renewable alternative; carbon neutral concept — IN Combined 2026",
       "Homologous series: general formula, similar chemical properties, gradation in physical properties",
-      "Alkanes CₙH₂ₙ₊₂: draw unbranched C1–C3; name methane to propane",
-      "Alkanes: unreactive except combustion and substitution by chlorine",
-      "Alkenes CₙH₂ₙ: draw unbranched C2–C3; name ethene and propene",
-      "Cracking: makes alkenes + hydrogen; matches demand for smaller molecules",
-      "Saturated vs unsaturated: from structure and by aqueous bromine (decolourises)",
-      "Reactions of alkenes (ethene): combustion, polymerisation, addition with Br₂, addition with H₂",
-      "Polyunsaturated meaning in food products; margarine by addition of H₂ to vegetable oils",
-      "Alcohols: homologous series, –OH group; draw unbranched C1–C3; name methanol to propanol",
-      "Reactions of alcohols: combustion and oxidation to carboxylic acids",
-      "Ethanol by fermentation of glucose",
-      "Carboxylic acids: homologous series, –CO₂H group",
-      "Ethanoic acid by oxidation of ethanol",
-      "Polymers from monomers; poly(ethene) by addition polymerisation",
-      "Pollution from non-biodegradable plastics; recycling methods"
+      "Alkanes CₙH₂ₙ₊₂: draw unbranched C1–C4; name methane to butane",
+      "Alkanes: combustion (complete/incomplete) and substitution by Cl₂ (UV light required)",
+      "Cracking: large alkane → smaller alkane + alkene + H₂ (THREE products — never omit H₂)",
+      "Alkenes CₙH₂ₙ: C=C double bond; draw C2–C3; addition with Br₂ (bromine water DECOLOURISED) and H₂"
     ],
-    sg:["Jurong Island refinery — crude oil fractional distillation; Singapore is major petrochemical hub","Bioethanol from sugarcane being explored as biofuel supplement in Singapore's energy mix","Plastic bag recycling bins at NTUC FairPrice — addresses non-biodegradable plastic pollution","Cooking oil (vegetable) hydrogenation to make margarine — sold at NTUC FairPrice","Plastic wrap (clingfilm/poly(ethene)) used in hawker centre food stalls"],
-    diagrams:["Structural formulae: methane, ethane, propane, ethene, propene, methanol, ethanol, propanol, ethanoic acid","Fractional distillation column with fractions labelled","Addition polymerisation: ethene → poly(ethene) with repeat unit notation"],
+    sg:["Jurong Island refinery — fractional distillation; Singapore major petrochemical hub","Bioethanol from sugarcane supplement in Singapore energy mix — Green Plan 2030","NTUC petrol stations — products of crude oil distillation"],
+    diagrams:["Fractional distillation column with 7 fractions labelled","Structural formulae: methane to butane, ethene, propene"],
     graphs:["None required"],
-    common:["Drawing wrong structural formula — forgetting H atoms","Confusing addition polymerisation with condensation (not in Combined)","Saying crude oil is a compound — it is a MIXTURE","Confusing cracking with distillation","Forgetting fermentation needs yeast (NOT required to state in Combined, but good practice)"],
-    starred:["Alkane general formula CₙH₂ₙ₊₂ — SATURATED","Alkene general formula CₙH₂ₙ — UNSATURATED (C=C double bond)","Test for unsaturation: decolourises aqueous bromine","Cracking: large alkane → smaller alkane + alkene","Addition polymerisation: many ethene → poly(ethene)","Fermentation: glucose → ethanol + CO₂ (with yeast)"]
+    common:["Cracking: only 2 products listed — must include H₂ as third product","Bromine water: 'turns colourless' — must say 'DECOLOURISED'","Substitution: forgetting UV light required","Biofuels marked as NOT in Combined — they ARE in Combined 2026"],
+    starred:["Cracking = THREE products: smaller alkane + alkene + H₂ — NEVER omit H₂","Bromine water DECOLOURISED = C=C present (not 'turns colourless')","Substitution: alkane + Cl₂ → chloroalkane + HCl (UV light)","Biofuels ARE in Combined 2026 (LO 11.1c/d)","Fractions mnemonic: Peter Parker Never Kicks Dirty Little Boys"]
+  },
+  { n:'12b', name:"Organic Chemistry — Alcohols & Carboxylic Acids",
+    los:[
+      "Alcohols: −OH group; draw unbranched C1–C3; name methanol to propanol",
+      "Reactions of alcohols: combustion and oxidation to carboxylic acids",
+      "Ethanol by fermentation: C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂ (yeast, ~37°C, anaerobic)",
+      "Carboxylic acids: −COOH group; ethanoic acid by oxidation of ethanol",
+      "Carboxylic acid reactions: with Na, NaOH, Na₂CO₃, NaHCO₃",
+      "Na₂CO₃ test: carboxylic acid → effervescence (CO₂); alcohol → no reaction"
+    ],
+    sg:["Vinegar (ethanoic acid) at hawker stalls — weak acid","Hand sanitiser ethanol — widely used in Singapore post-COVID","Fermentation context: local craft beer production"],
+    diagrams:["Structural formulae: methanol, ethanol, propanol, ethanoic acid"],
+    graphs:["None required"],
+    common:["Fermentation: missing yeast / ~37°C / anaerobic — all three required","NOT in Combined: hydration of alkenes, dehydration of alcohols, esterification — never include","Ethanoic acid formed by oxidation (not fermentation) of ethanol"],
+    starred:["Fermentation: C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂ (yeast, ~37°C, anaerobic)","Oxidation of ethanol → ethanoic acid","Na₂CO₃ test: carboxylic acid = effervescence; alcohol = no reaction","NOT in Combined: hydration · dehydration · esterification","Carboxylic acid + NaOH → sodium salt + water"]
+  },
+  { n:'12c', name:"Organic Chemistry — Polymers",
+    los:[
+      "Polymers from monomers with C=C; addition polymerisation — NO other product",
+      "Poly(ethene) repeat unit: same atoms as monomer but NO double bond",
+      "Uses of poly(ethene): plastic bags, bottles, cling film",
+      "Polyunsaturated fats: MORE THAN ONE C=C; hydrogenation with H₂ (Ni catalyst) → margarine",
+      "Pollution from non-biodegradable plastics; physical recycling (melt→pellets) and chemical recycling (cracking)"
+    ],
+    sg:["Semakau Landfill — non-biodegradable plastic problem","Plastic bag recycling at NTUC FairPrice","Poly(ethene) cling wrap at hawker centres"],
+    diagrams:["Addition polymerisation: ethene → poly(ethene) with repeat unit bracket notation"],
+    graphs:["None required"],
+    common:["Addition poly: claiming there is a by-product — there is NONE","Repeat unit: drawing monomer instead (must remove double bond in repeat unit)","Polyunsaturated: must say MORE THAN ONE C=C","NOT in Combined: condensation polymerisation, Nylon, Terylene"],
+    starred:["Addition poly: C=C monomers → polymer; NO by-product","Repeat unit = monomer WITHOUT the double bond","Polyunsaturated = MORE THAN ONE C=C","Hydrogenation: vegetable oil + H₂ (Ni) → margarine","NOT in Combined: condensation poly · Nylon · Terylene"]
   },
   { n:13, name:"Maintaining Air Quality",
     los:[
@@ -618,7 +648,7 @@ function loadState() {
   // F0, F1, F2, F5, F6 — completed for ALL topics T1–T13
   // These are permanently set — localStorage cannot override them downward
   const permanentDone = [0, 1, 2, 5, 6]; // file numbers using CC_FILES[n=6]=F0, FILES[n=1,2,5,6]
-  const doneFileNums = [1, 2, 5, 6]; // weekly files done
+  const doneFileNums = [1, 2, 4, 5, 6, 7]; // weekly files done
   for (const t of TOPICS) {
     for (const fn of doneFileNums) {
       const k = `${t.n}_${fn}`;
@@ -915,7 +945,30 @@ FOOTER: 'learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · Topic 
 
 ${isotoperule}
 
-Build the full file now. Read SKILL.md first. Generate all graphs first. Then build the docx. Validate with validate.py. Convert to PDF and check 3 pages visually. Then share.`;
+Build the full file now.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GOLD STANDARD DOCX LAYOUT RULES (F1)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DOCUMENT HEADER — plain paragraphs, NO dark background box:
+  1. "learnfromcher.com" sz=40 bold teal #1A7A8A centred
+  2. "O-Level Science (Chemistry) · SEAB 2026" sz=22 light centred
+  3. "TOPIC N: NAME — LESSON NOTES" sz=52 bold dark centred
+  4. "Combined Science Chemistry (5086/5087/5088)" sz=22 mid centred
+
+CHER PANEL COLOURS v2.0 (non-negotiable):
+  C: header=#1A7A8A bg=#EBF6F8
+  H: header=#7C6FAB bg=#FAF5FF — LAVENDER (NEVER #553C9A or #6A1B9A)
+  E: header=#C2185B bg=#FFF0F5 border=#F48FB1 — PINK (text NEVER white)
+  R: header=#92400E bg=#FFFBEB border=#FDE68A — CHAMPAGNE (text NEVER white)
+  ⚠ Misconception: header=#C53030 bg=#FFF5F5
+  ⭐ Commonly Tested: header=#92400E bg=#FFFBEB border=#FDE68A
+
+FOOTER (every page): "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · Topic ${topic.n}: ${topic.name}"
+  ✗ NEVER "O-Level Chemistry" in Combined files
+  ✗ NEVER split topic name across lines
+
+VALIDATION: Read SKILL.md → Generate graphs → Build docx → validate.py → soffice PDF → inspect 3 pages → share.`;
   }
 
   else if (file.n === 2) {
@@ -964,7 +1017,33 @@ DOCUMENT HEADER:
 
 ${isotoperule}
 
-Build now. Read SKILL.md first. Generate graphs first. Validate. PDF check. Share.`;
+Build now.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GOLD STANDARD DOCX LAYOUT RULES (F2)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DOCUMENT HEADER:
+  Title: "TOPIC N: NAME — WORKSHEET" bold centred
+  Sub: "Section A: 10 marks | Section B: 20 marks | Total: 30 marks"
+  Name/Class/Date: single-row table, fixed column widths — NEVER plain inline text that reflows
+  CHER LEGEND ROW: 4 coloured pills — C teal · H lavender · E pink · R champagne
+
+QUESTION FORMAT:
+  Type tag on each MCQ: [⭐ Recall] [🧪 Application] [🔍 Deduction] [🇸🇬 SG Context]
+  NO heavy box borders — clean minimal borders like T3 gold standard
+  Answer lines: paragraph border method (w:pBdr) — NEVER table cells
+  1-mark=1 line · 2-mark=2 lines · extended=3–4 lines
+
+CHER PANEL COLOURS v2.0:
+  C: header=#1A7A8A bg=#EBF6F8
+  H: header=#7C6FAB bg=#FAF5FF — LAVENDER (NEVER #553C9A)
+  E: header=#C2185B bg=#FFF0F5 border=#F48FB1 — NEVER white text
+  R: header=#92400E bg=#FFFBEB border=#FDE68A — NEVER white text
+
+FOOTER: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · Topic ${topic.n}: ${topic.name}"
+  ✗ NEVER "O-Level Chemistry" · ✗ NEVER split topic name
+
+VALIDATION: Read SKILL.md → Generate graphs → Build docx → validate.py → soffice PDF → inspect → share.`;
   }
 
   else if (file.n === 4) {
@@ -1057,7 +1136,26 @@ NOT IN COMBINED: Electrolysis · Equilibrium · Catalytic converters · Maxwell-
 ${qaChecklist}
 
 Build with: node build_t${topic.n}_slides.js
-Validate, convert to PDF, render thumbnails, inspect grid. Share when QA passes.`;
+Validate, convert to PDF, render thumbnails, inspect grid. Share when QA passes.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GOLD STANDARD PPTX LAYOUT RULES (F4)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHER PILL COLOURS v2.0 — NON-NEGOTIABLE:
+  C: bg=#1A7A8A text=white
+  H: bg=#7C6FAB text=white — LAVENDER (NEVER #553C9A or #6A1B9A)
+  E: bg=#F48FB1 text=#C2185B — NEVER white text on E pill
+  R: bg=#FDE68A text=#92400E — NEVER white text on R pill
+
+PPTX RULES: NEVER # prefix on hex · NEVER reuse option objects · NEVER HeightRule
+  Each equation in a single addText() bounding box — NEVER split mid-formula
+  Footer: x:0, w:10, full width
+  "Topic ${topic.n}: ${topic.name}" as ONE text run — never split across calls
+  Diagram placeholders: dashed box + caption at BOTTOM
+
+FOOTER STRING: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · Topic ${topic.n}: ${topic.name}"
+  ✗ NEVER "O-Level Chemistry" in Combined files
+  ✗ NEVER split topic name across text runs`;
   }
 
   else if (file.n === 5) {
@@ -1123,7 +1221,22 @@ ${isotoperule}
 
 ${qaChecklist}
 
-All answers in SEAB mark scheme language — concise, specific, no vague phrasing.`;
+All answers in SEAB mark scheme language — concise, specific, no vague phrasing.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GOLD STANDARD PPTX LAYOUT RULES (F5)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PILL TEXT COLOUR RULES — NON-NEGOTIABLE:
+  C: bg=#1A7A8A text=white
+  H: bg=#7C6FAB text=white — LAVENDER (NEVER #553C9A)
+  E: bg=#F48FB1 text=#C2185B — NEVER white on pastel pink
+  R: bg=#FDE68A text=#92400E — NEVER white on champagne
+
+PPTX RULES: NEVER # prefix on hex · NEVER reuse option objects · NEVER HeightRule
+  Footer must span full width (x:0, w:10)
+  "T${topic.n}: ${topic.name}" as ONE text run — never split
+
+FOOTER STRING: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · T${topic.n}: ${topic.name}"`;
   }
 
   else if (file.n === 6) {
@@ -1175,7 +1288,31 @@ SCORE MESSAGES:
 RESULTS SCREEN: score circle + 3-stat grid (correct/wrong/%) + question review + CHER recap 5-6 bullets + Retry button.
 
 Single self-contained HTML. No external JS. DM Sans font. Mobile + desktop responsive.
-option buttons: min-height:48px; padding:12px 16px; white-space:normal`;
+option buttons: min-height:48px; padding:12px 16px; white-space:normal
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GOLD STANDARD HTML LAYOUT RULES (F6)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE STRUCTURE (top → bottom):
+  1. Sticky header: logo left + topic badge right
+               position:sticky; top:0; z-index:100; height:52px; background:var(--dark)
+  2. Hero: linear-gradient(135deg,#1A2E35 0%,#0F3040 100%)
+     All 4 CHER pills SOLID (never rgba):
+       C: bg:#1A7A8A color:#fff · H: bg:#7C6FAB color:#fff
+       E: bg:#FFF0F5 border:1.5px solid #F48FB1 color:#C2185B
+       R: bg:#FFFBEB border:1.5px solid #FDE68A color:#92400E
+  3. Quiz area: progress bar → question cards (one at a time) → results screen
+  4. Footer
+
+QUESTION CARD RULES:
+  ANSWER STORAGE: answer index in QUESTIONS object — NEVER hardcoded in onclick
+  CARD REBUILD: wrap.innerHTML on every new question — NEVER patch reused DOM
+  C panel: ALWAYS shown BEFORE answering (no spoilers)
+  H/E/R panels: ONLY shown AFTER answering
+
+FOOTER: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026"
+  + "Topic ${topic.n}: ${topic.name}" in white-space:nowrap span
+  ✗ NEVER "O-Level Chemistry" in Combined files · ✗ NEVER split topic name`;
   }
 
   else if (file.n === 7) {
@@ -1669,7 +1806,8 @@ ${isotoperule}
 
 Single self-contained HTML. No external JS. DM Sans font. Mobile + desktop.
 ${ccLayoutRules}
-Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"`;
+Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"
+${ccLayoutRules}`;
   }
 
   else if (ccFile.n === 0) {
@@ -1706,7 +1844,8 @@ ${isotoperule}
 
 Single self-contained HTML. Must print cleanly as 2–3 page PDF from browser.
 ${ccLayoutRules}
-Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"`;
+Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"
+${ccLayoutRules}`;
   }
 
   else if (ccFile.n === 1) {
@@ -1772,7 +1911,8 @@ ${isotoperule}
 Interactive: students tap/click skeleton blanks to reveal correct phrasing.
 Single self-contained HTML. Mobile + desktop.
 ${ccLayoutRules}
-Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"`;
+Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"
+${ccLayoutRules}`;
   }
 
   else if (ccFile.n === 3) {
@@ -1809,7 +1949,8 @@ ${isotoperule}
 
 Single self-contained HTML. Mobile + desktop.
 ${ccLayoutRules}
-Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"`;
+Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"
+${ccLayoutRules}`;
   }
 
   else if (ccFile.n === 4) {
@@ -1848,7 +1989,8 @@ ${isotoperule}
 
 Single self-contained HTML. Mobile + desktop.
 ${ccLayoutRules}
-Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"`;
+Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"
+${ccLayoutRules}`;
   }
 
   else if (ccFile.n === 5) {
@@ -1898,7 +2040,8 @@ ${isotoperule}
 
 Single self-contained HTML. No external JS. Mobile + desktop.
 ${ccLayoutRules}
-Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"`;
+Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"
+${ccLayoutRules}`;
   }
 
   const syllabusStep = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
