@@ -93,7 +93,7 @@ body{font-family:'DM Sans',sans-serif;background:#F0F4F8;color:var(--dark);min-h
 
 /* ── COLUMN HEADERS ── */
 .col-hdr{background:var(--dark);color:#fff;font-size:11px;font-weight:700;padding:10px 8px;text-align:center;letter-spacing:.3px;white-space:nowrap;border-bottom:2px solid var(--teal);position:sticky;top:58px;z-index:100;}
-.col-hdr:first-child{text-align:left;padding-left:14px;min-width:200px;border-radius:10px 0 0 0;position:sticky;left:0;z-index:150;}
+.col-hdr:first-child{text-align:left;padding-left:14px;min-width:220px;width:220px;border-radius:10px 0 0 0;position:sticky;left:0;z-index:101;background:var(--dark);box-shadow:2px 0 6px rgba(0,0,0,.18);}
 .col-hdr:last-child{border-radius:0 10px 0 0;}
 .col-hdr .file-num{font-size:16px;display:block;margin-bottom:2px;}
 .col-hdr .file-type{font-size:9px;color:#90CDF4;display:block;font-family:'DM Mono',monospace;}
@@ -102,13 +102,14 @@ body{font-family:'DM Sans',sans-serif;background:#F0F4F8;color:var(--dark);min-h
 .col-hdr.f-html .file-num{color:#9AE6B4;}
 
 /* ── TOPIC HEADER CELLS ── */
-.topic-hdr{background:var(--white);border-bottom:1px solid var(--border);border-right:2px solid var(--teal-lt);padding:10px 14px;font-size:13px;font-weight:700;color:var(--dark);vertical-align:middle;min-width:200px;position:sticky;left:0;z-index:50;}
+.topic-hdr{background:var(--white);border-bottom:1px solid var(--border);border-right:2px solid var(--teal);padding:10px 14px;font-size:13px;font-weight:700;color:var(--dark);vertical-align:middle;min-width:220px;max-width:220px;width:220px;position:sticky;left:0;z-index:10;box-shadow:2px 0 6px rgba(0,0,0,.10);}
 .topic-hdr:hover{background:var(--teal-lt);}
-.topic-num{display:inline-block;background:var(--teal);color:#fff;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:800;text-align:center;line-height:22px;margin-right:8px;flex-shrink:0;}
+.topic-num{display:inline-flex;align-items:center;justify-content:center;background:var(--teal);color:#fff;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:800;margin-right:8px;flex-shrink:0;vertical-align:middle;}
 .topic-gold .topic-num{background:linear-gradient(135deg,#F6D860,#ECC000);}
-.topic-gold{background:linear-gradient(90deg,#FFFBEB,#fff) !important;}.topic-gold .topic-hdr{background:#FFFBEB;}
+.topic-gold{background:linear-gradient(90deg,#FFFBEB,#fff) !important;}
 .gold-star{font-size:13px;margin-left:4px;}
 .topic-progress{font-size:10px;color:var(--light);font-family:'DM Mono',monospace;margin-top:3px;padding-left:30px;}
+.topic-name-text{display:inline;word-break:normal;overflow-wrap:break-word;}
 
 /* ── CELL ── */
 td.cell{padding:4px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);vertical-align:middle;}
@@ -191,7 +192,8 @@ td.cell.skip{background:repeating-linear-gradient(-45deg,#F0F4F8,#F0F4F8 4px,#E8
 @media(max-width:768px){
   .hdr{padding:0 14px;}
   .main{padding:14px 10px 40px;}
-  .col-hdr:first-child{min-width:150px;}
+  .col-hdr:first-child{min-width:180px;width:180px;}
+  .topic-hdr{min-width:180px;max-width:180px;width:180px;}
   .modal{max-height:95vh;border-radius:12px;}
   .modal-hdr{border-radius:12px 12px 0 0;padding:14px 18px;}
 }
@@ -202,6 +204,7 @@ td.cell.skip{background:repeating-linear-gradient(-45deg,#F0F4F8,#F0F4F8 4px,#E8
 .tab-toggle-btn:hover{background:rgba(26,122,138,.2);}
 .tab-toggle-btn.active{background:var(--teal);color:#fff;}
 .tab-toggle-btn.cc-active{background:var(--cc-accent);color:#fff;}
+.tab-toggle-btn.patch-active{background:#553C9A;color:#fff;}
 
 /* ── CC COLUMN HEADERS ── */
 .col-hdr.f-cc .file-num{color:#FDBA74;}
@@ -265,6 +268,7 @@ td.cell.skip{background:repeating-linear-gradient(-45deg,#F0F4F8,#F0F4F8 4px,#E8
   <div class="tab-toggle" id="mainTabToggle">
     <button class="tab-toggle-btn active" id="tabWeekly" onclick="switchMainTab('weekly')">📚 Weekly Tuition</button>
     <button class="tab-toggle-btn" id="tabCC" onclick="switchMainTab('cc')">⚡ Crash Course</button>
+    <button class="tab-toggle-btn" id="tabPatch" onclick="switchMainTab('patch')">🩹 Patch Prompts</button>
   </div>
 
   <!-- FILTER BAR -->
@@ -304,6 +308,9 @@ td.cell.skip{background:repeating-linear-gradient(-45deg,#F0F4F8,#F0F4F8 4px,#E8
     <!-- ASSESSMENTS SECTION -->
     <div class="assess-section" id="assessSection"></div>
   </div>
+
+  <!-- PATCH PROMPTS TAB -->
+  <div id="patchTabContent" style="display:none;"><div id="patchPanelContent"></div></div>
 </div>
 
 <!-- LOGO GUIDE MODAL -->
@@ -469,34 +476,35 @@ const TOPICS = [
   { n:'9a', name:"Periodic Trends & Group Properties",
     los:[
       "PT arranged by increasing proton number; period = number of electron shells; group = number of valence electrons",
-      "Explain same-group chemical similarities by same number of valence electrons",
-      "Describe metallic → non-metallic trend across a period; relate to valence electrons",
-      "Group 1 (Li, Na, K): soft, low density; m.p. trend; reactions with water; 5-step reactivity increase explanation",
-      "Group 17 (Cl, Br, I): diatomic; colour and state trend; m.p./b.p. trend (van der Waals); displacement reactions",
-      "Group 17 water: dissolves in water — NEVER 'reacts with water'; solubility decreases down group",
-      "Group 18: unreactivity explained by full outer shell; 4 applications (Ar welding, Ar bulbs, He balloons, Ne signs)"
+      "Same-group similarity: same number of valence electrons → same chemical behaviour",
+      "Metallic → non-metallic left to right across a period; linked to tendency to lose/gain electrons",
+      "Oxides across period: basic → amphoteric → acidic",
+      "Predict properties of elements using group and period position (3-step method)",
+      "Group 1 (Li, Na, K): soft, low density; m.p. trend; reaction with water; 5-step reactivity increase explanation",
+      "Group 17 (Cl, Br, I): diatomic; colour/state trend; m.p./b.p. increases (van der Waals); displacement; dissolves in water (NOT reacts)",
+      "Group 18: unreactivity explained by full outer shells; 4 applications (Ar welding, Ar bulbs, He balloons, Ne signs)"
     ],
-    sg:["Aluminium used in MRT trains — Period 3 metal, forms protective oxide layer","Sodium-vapour lamps in older Singapore estates — Group 1 element","Chlorine used in NEWater disinfection — Group 17 chemistry","Noble gas neon used in Singapore signage — unreactive, safe"],
-    diagrams:["Periodic table position diagram (period = shells, group = valence electrons)","Group 1 and Group 17 trend tables"],
-    graphs:["Group 1 reactivity trend down group","Group 17 m.p./b.p. trend down group"],
-    common:["Confusing group number with period number","Group 17 water: NEVER 'reacts with water' — say 'dissolves in water'","Forgetting all 4 noble gas applications — Ar (welding), Ar (bulbs), He (balloons), Ne (signs)","Incomplete 5-step Group 1 reactivity explanation — must include shielding"],
-    starred:["Group 1 reactivity (5 steps): more shells → outer e⁻ further → greater shielding → weaker nuclear attraction → outer e⁻ lost more easily","Group 17 m.p./b.p.: larger molecules → stronger van der Waals forces → higher m.p./b.p.","Group 17 water: 'dissolves in water; solubility decreases down group' — NEVER 'reacts'","Noble gases: Ar (welding) · Ar (bulbs) · He (balloons) · Ne (signs) — all 4 required","Group 17 displacement: more reactive halogen displaces less reactive from solution"]
+    sg:["Chlorine in NEWater disinfection — Group 17 chemistry","Sodium-vapour street lamps in older Singapore estates — Group 1 element","Aluminium MRT carriages — Period 3 metal, forms protective oxide layer","Argon used in welding at Jurong Island shipyards"],
+    diagrams:["Periodic table position diagram (period = shells, group = valence electrons)","Group 1 vs Group 17 comparison table"],
+    graphs:["Group 1 reactivity trend (increases down group)","Group 17 m.p./b.p. trend (increases down group)"],
+    common:["Group 17 water: 'dissolves' NOT 'reacts with water'","Missing shielding in Group 1 5-step explanation — all 5 steps required","Group 17 m.p./b.p. must cite van der Waals forces and molecular size","Noble gases: all 4 applications required — Ar welding, Ar bulbs, He balloons, Ne signs"],
+    starred:["Group 1 reactivity (5 steps): shells→distance→shielding→attraction→lost easily","Group 17 water: 'dissolves in water; solubility decreases down group' — NEVER 'reacts'","Group 17 m.p./b.p.: larger molecules → stronger van der Waals → higher m.p./b.p.","Noble gases: Ar(welding) · Ar(bulbs) · He(balloons) · Ne(signs) — all 4 required","Metallic→non-metallic across period; basic→amphoteric→acidic oxides"]
   },
   { n:'9b', name:"Reactivity Series, Extraction & Rusting",
     los:[
-      "Reactivity series: K, Na, Ca, Mg, Al, C, Zn, Fe, Pb, (H), Cu, Ag, Au — reactions with water/steam/dilute HCl",
-      "Deduce reactivity order from experimental observations",
+      "Reactivity series: K, Na, Ca, Mg, Al, C, Zn, Fe, Pb, H, Cu, Ag, Au — reactions with cold water, steam, dilute HCl",
       "Carbon between Mg and Zn — non-metal, extraction reference only",
-      "Ease of extraction from ores linked to position in reactivity series",
+      "Mnemonic: 'Please Stop Calling Me A Cute Zebra, I Love Hot Chocolate So Good'",
+      "Deduce reactivity order from experimental observations",
+      "Ease of extraction from ores: electrolysis (K→Al) / carbon reduction (Zn→Pb) / found native (Cu→Au)",
       "Displacement reactions: more reactive metal displaces less reactive from solution",
-      "Rusting: requires BOTH O₂ AND water — neither alone is sufficient",
-      "Rusting prevention: barrier methods (painting, greasing, plastic coating, electroplating, galvanising)"
+      "Rusting: requires BOTH O₂ AND water; prevention by barrier methods (painting, greasing, plastic coating)"
     ],
-    sg:["Iron railings in HDB estates rust — require barrier protection (painting, galvanising)","Aluminium MRT trains — reactive but protected by oxide layer; does not rust like iron","Gold and silver in Singapore jewellery — very low reactivity, found native","Galvanised zinc coating on steel structures — barrier + more reactive than iron"],
-    diagrams:["Reactivity series diagram (K to Au with reactions listed)","Rusting prevention methods comparison table"],
-    graphs:["None required"],
-    common:["Rusting requires BOTH O₂ AND water — not just water or just oxygen alone","Mnemonic: Please Stop Calling Me A Cute Zebra, I Love Hot Chocolate So Good","Carbon is a non-metal in the series — for extraction reference only, NOT a metal","Confusing displacement with precipitation"],
-    starred:["Mnemonic: 'Please Stop Calling Me A Cute Zebra, I Love Hot Chocolate So Good' (K,Na,Ca,Mg,Al,C,Zn,Fe,Pb,H,Cu,Ag,Au)","Rusting: BOTH O₂ AND water required — neither alone is sufficient","Carbon between Mg and Zn — non-metal, extraction reference only","Displacement: more reactive metal displaces less reactive from solution","Metals below carbon in series extracted by reduction with carbon"]
+    sg:["Iron railings in HDB estates rust — barrier protection required","Aluminium MRT trains — reactive but protected by oxide layer","Gold and silver in Singapore jewellery — very low reactivity, found native","Zinc anodes on PSA port equipment — sacrificial protection concept"],
+    diagrams:["Reactivity series diagram with extraction method column","Rusting prevention methods comparison"],
+    graphs:["None required for Combined"],
+    common:["Rusting: BOTH O₂ AND water required — neither alone is sufficient","Forgetting Carbon sits between Mg and Zn in the series","Aluminium appears reactive but is protected by oxide layer — common misconception","Displacement: more reactive displaces less reactive — not the other way"],
+    starred:["Mnemonic: 'Please Stop Calling Me A Cute Zebra, I Love Hot Chocolate So Good'","Rusting: BOTH O₂ AND water — neither alone sufficient","Carbon = non-metal between Mg and Zn — extraction reference only","3-tier extraction: electrolysis (K,Na,Ca,Mg,Al) / carbon reduction (Zn,Fe,Pb) / native (Cu,Ag,Au)","Displacement: Fe(s) + CuSO₄(aq) → FeSO₄(aq) + Cu(s)"]
   },
   { n:10, name:"Chemical Energetics",
     los:[
@@ -511,31 +519,31 @@ const TOPICS = [
   },
   { n:11, name:"Rate of Reactions",
     los:[
-      "Effect of concentration, pressure, particle size, temperature on rate of reaction",
+      "Effect of concentration, particle size and temperature on rate of reaction",
       "Explain effects using collision theory",
       "Interpret data from rate of reaction experiments"
     ],
-    sg:["Antacid tablets dissolving faster in crushed form vs whole tablet — particle size effect","Food spoilage in hot Singapore climate vs air-conditioned storage — temperature effect","Pressure cookers used in hawker stall kitchens — increased pressure speeds up cooking","NEWater treatment: concentration of chlorine affects rate of disinfection"],
+    sg:["Antacid tablets dissolving faster in crushed form vs whole tablet — particle size effect","Food spoilage in hot Singapore climate vs air-conditioned storage — temperature effect","NEWater treatment: concentration of chlorine affects rate of disinfection"],
     diagrams:["None required for Combined"],
     graphs:["Volume of gas vs time graph showing: (i) faster rate = steeper gradient (ii) same final volume = same limiting reactant (iii) comparing different conditions on same axes"],
-    common:["Saying 'more collisions' without adding 'more SUCCESSFUL collisions'","Forgetting activation energy context in collision theory — 'sufficient energy to react'","Saying rate increases because 'particles move faster' without mentioning collision frequency","Confusing rate with yield — rate changes, not total product"],
-    starred:["Rate increases → more frequent AND more energetic (successful) collisions","Concentration/pressure: more particles per unit volume → more frequent collisions","Temperature: more kinetic energy → more frequent AND more energetic collisions","Particle size: greater surface area → more collisions per unit time"]
+    common:["Saying 'more collisions' without adding 'more SUCCESSFUL collisions'","Saying rate increases because 'particles move faster' without mentioning collision frequency","Confusing rate with yield — rate changes, not total product"],
+    starred:["Rate increases → more frequent AND more energetic (successful) collisions","Concentration: more particles per unit volume → more frequent collisions per unit time","Temperature: more kinetic energy → more frequent AND more energetic collisions","Particle size: greater surface area → more collisions per unit time"]
   },
   { n:'12a', name:"Organic Chemistry — Alkanes & Alkenes",
     los:[
       "Natural gas (mainly methane) and crude oil as non-renewable energy sources",
       "Crude oil = mixture of hydrocarbons; fractional distillation → 7 fractions (mnemonic: Peter Parker Never Kicks Dirty Little Boys)",
-      "Biofuel (bioethanol from sugarcane) as renewable alternative; carbon neutral concept — IN Combined 2026",
+      "Bioethanol from sugarcane as a renewable fuel; carbon neutral concept",
       "Homologous series: general formula, similar chemical properties, gradation in physical properties",
-      "Alkanes CₙH₂ₙ₊₂: draw unbranched C1–C4; name methane to butane",
+      "Alkanes CₙH₂ₙ₊₂: draw unbranched C1–C4; name methane to butane (Must Eat Peanut Butter)",
       "Alkanes: combustion (complete/incomplete) and substitution by Cl₂ (UV light required)",
       "Cracking: large alkane → smaller alkane + alkene + H₂ (THREE products — never omit H₂)",
-      "Alkenes CₙH₂ₙ: C=C double bond; draw C2–C3; addition with Br₂ (bromine water DECOLOURISED) and H₂"
+      "Alkenes CₙH₂ₙ: C=C double bond; draw C2–C3; addition with Br₂ (bromine water DECOLOURISED) and H₂ (Ni catalyst)"
     ],
     sg:["Jurong Island refinery — fractional distillation; Singapore major petrochemical hub","Bioethanol from sugarcane supplement in Singapore energy mix — Green Plan 2030","NTUC petrol stations — products of crude oil distillation"],
     diagrams:["Fractional distillation column with 7 fractions labelled","Structural formulae: methane to butane, ethene, propene"],
     graphs:["None required"],
-    common:["Cracking: only 2 products listed — must include H₂ as third product","Bromine water: 'turns colourless' — must say 'DECOLOURISED'","Substitution: forgetting UV light required","Biofuels marked as NOT in Combined — they ARE in Combined 2026"],
+    common:["Cracking: only 2 products listed — must include H₂ as third product","Bromine water: 'turns colourless' — must say 'DECOLOURISED'","Substitution: forgetting UV light required","Bioethanol/biofuels ARE in the 2026 syllabus — do not exclude them"],
     starred:["Cracking = THREE products: smaller alkane + alkene + H₂ — NEVER omit H₂","Bromine water DECOLOURISED = C=C present (not 'turns colourless')","Substitution: alkane + Cl₂ → chloroalkane + HCl (UV light)","Biofuels ARE in Combined 2026 (LO 11.1c/d)","Fractions mnemonic: Peter Parker Never Kicks Dirty Little Boys"]
   },
   { n:'12b', name:"Organic Chemistry — Alcohols & Carboxylic Acids",
@@ -550,8 +558,8 @@ const TOPICS = [
     sg:["Vinegar (ethanoic acid) at hawker stalls — weak acid","Hand sanitiser ethanol — widely used in Singapore post-COVID","Fermentation context: local craft beer production"],
     diagrams:["Structural formulae: methanol, ethanol, propanol, ethanoic acid"],
     graphs:["None required"],
-    common:["Fermentation: missing yeast / ~37°C / anaerobic — all three required","NOT in Combined: hydration of alkenes, dehydration of alcohols, esterification — never include","Ethanoic acid formed by oxidation (not fermentation) of ethanol"],
-    starred:["Fermentation: C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂ (yeast, ~37°C, anaerobic)","Oxidation of ethanol → ethanoic acid","Na₂CO₃ test: carboxylic acid = effervescence; alcohol = no reaction","NOT in Combined: hydration · dehydration · esterification","Carboxylic acid + NaOH → sodium salt + water"]
+    common:["Fermentation: missing yeast / ~37°C / anaerobic — all three required","Ethanoic acid formed by oxidation (not fermentation) of ethanol"],
+    starred:["Fermentation: C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂ (yeast, ~37°C, anaerobic)","Oxidation of ethanol → ethanoic acid","Na₂CO₃ test: carboxylic acid = effervescence; alcohol = no reaction","Carboxylic acid + NaOH → sodium salt + water"]
   },
   { n:'12c', name:"Organic Chemistry — Polymers",
     los:[
@@ -564,8 +572,8 @@ const TOPICS = [
     sg:["Semakau Landfill — non-biodegradable plastic problem","Plastic bag recycling at NTUC FairPrice","Poly(ethene) cling wrap at hawker centres"],
     diagrams:["Addition polymerisation: ethene → poly(ethene) with repeat unit bracket notation"],
     graphs:["None required"],
-    common:["Addition poly: claiming there is a by-product — there is NONE","Repeat unit: drawing monomer instead (must remove double bond in repeat unit)","Polyunsaturated: must say MORE THAN ONE C=C","NOT in Combined: condensation polymerisation, Nylon, Terylene"],
-    starred:["Addition poly: C=C monomers → polymer; NO by-product","Repeat unit = monomer WITHOUT the double bond","Polyunsaturated = MORE THAN ONE C=C","Hydrogenation: vegetable oil + H₂ (Ni) → margarine","NOT in Combined: condensation poly · Nylon · Terylene"]
+    common:["Addition poly: claiming there is a by-product — there is NONE","Repeat unit: drawing monomer instead (must remove double bond in repeat unit)","Polyunsaturated: must say MORE THAN ONE C=C",],
+    starred:["Addition poly: C=C monomers → polymer; NO by-product","Repeat unit = monomer WITHOUT the double bond","Polyunsaturated = MORE THAN ONE C=C","Hydrogenation: vegetable oil + H₂ (Ni) → margarine",]
   },
   { n:13, name:"Maintaining Air Quality",
     los:[
@@ -579,7 +587,7 @@ const TOPICS = [
     sg:["PSI (Pollutant Standards Index) monitored daily in Singapore — SO₂, NOₓ, PM2.5","Haze from Indonesian forest fires — high SO₂ and particulate levels affecting Singapore air quality","Vehicle emissions on Singapore expressways — CO and NOₓ from incomplete combustion","Singapore's commitment to net-zero by 2050 — reducing greenhouse gas emissions (CO₂, methane)","Carbon tax introduced in Singapore — pricing CO₂ emissions from industrial sources"],
     diagrams:["Carbon cycle diagram: combustion, respiration, photosynthesis arrows with CO₂ as central molecule","None (structural diagrams not required)"],
     graphs:["Carbon cycle diagram (counted as diagram, not graph)","None required for Combined (no numerical graphs needed)"],
-    common:["Saying ozone is always bad — tropospheric ozone is a pollutant; stratospheric ozone is protective (CFCs NOT in Combined)","Confusing CO with CO₂ — CO is toxic, CO₂ is greenhouse gas","Saying acid rain is caused by CO₂ — it's caused by SO₂ and NO₂","Forgetting CO₂ is both natural and man-made"],
+    common:["Saying ozone is always bad — tropospheric ozone is a pollutant; stratospheric ozone is protective","Confusing CO with CO₂ — CO is toxic, CO₂ is greenhouse gas","Saying acid rain is caused by CO₂ — it's caused by SO₂ and NO₂","Forgetting CO₂ is both natural and man-made"],
     starred:["Air: 78% N₂, 21% O₂, ~1% Ar, 0.04% CO₂","CO: toxic, from incomplete combustion","SO₂ + NO₂: cause acid rain → respiratory harm + building damage","CO₂ + CH₄: greenhouse gases → global warming, extreme weather","Carbon cycle: combustion + respiration add CO₂; photosynthesis removes it"]
   }
 ];
@@ -648,7 +656,7 @@ function loadState() {
   // F0, F1, F2, F5, F6 — completed for ALL topics T1–T13
   // These are permanently set — localStorage cannot override them downward
   const permanentDone = [0, 1, 2, 5, 6]; // file numbers using CC_FILES[n=6]=F0, FILES[n=1,2,5,6]
-  const doneFileNums = [1, 2, 4, 5, 6, 7]; // weekly files done
+  const doneFileNums = [1, 2, 4, 5, 6, 7, 8, 9]; // ALL weekly files done
   for (const t of TOPICS) {
     for (const fn of doneFileNums) {
       const k = `${t.n}_${fn}`;
@@ -945,30 +953,7 @@ FOOTER: 'learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · Topic 
 
 ${isotoperule}
 
-Build the full file now.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GOLD STANDARD DOCX LAYOUT RULES (F1)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-DOCUMENT HEADER — plain paragraphs, NO dark background box:
-  1. "learnfromcher.com" sz=40 bold teal #1A7A8A centred
-  2. "O-Level Science (Chemistry) · SEAB 2026" sz=22 light centred
-  3. "TOPIC N: NAME — LESSON NOTES" sz=52 bold dark centred
-  4. "Combined Science Chemistry (5086/5087/5088)" sz=22 mid centred
-
-CHER PANEL COLOURS v2.0 (non-negotiable):
-  C: header=#1A7A8A bg=#EBF6F8
-  H: header=#7C6FAB bg=#FAF5FF — LAVENDER (NEVER #553C9A or #6A1B9A)
-  E: header=#C2185B bg=#FFF0F5 border=#F48FB1 — PINK (text NEVER white)
-  R: header=#92400E bg=#FFFBEB border=#FDE68A — CHAMPAGNE (text NEVER white)
-  ⚠ Misconception: header=#C53030 bg=#FFF5F5
-  ⭐ Commonly Tested: header=#92400E bg=#FFFBEB border=#FDE68A
-
-FOOTER (every page): "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · Topic ${topic.n}: ${topic.name}"
-  ✗ NEVER "O-Level Chemistry" in Combined files
-  ✗ NEVER split topic name across lines
-
-VALIDATION: Read SKILL.md → Generate graphs → Build docx → validate.py → soffice PDF → inspect 3 pages → share.`;
+Build the full file now. Read SKILL.md first. Generate all graphs first. Then build the docx. Validate with validate.py. Convert to PDF and check 3 pages visually. Then share.`;
   }
 
   else if (file.n === 2) {
@@ -1017,33 +1002,7 @@ DOCUMENT HEADER:
 
 ${isotoperule}
 
-Build now.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GOLD STANDARD DOCX LAYOUT RULES (F2)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-DOCUMENT HEADER:
-  Title: "TOPIC N: NAME — WORKSHEET" bold centred
-  Sub: "Section A: 10 marks | Section B: 20 marks | Total: 30 marks"
-  Name/Class/Date: single-row table, fixed column widths — NEVER plain inline text that reflows
-  CHER LEGEND ROW: 4 coloured pills — C teal · H lavender · E pink · R champagne
-
-QUESTION FORMAT:
-  Type tag on each MCQ: [⭐ Recall] [🧪 Application] [🔍 Deduction] [🇸🇬 SG Context]
-  NO heavy box borders — clean minimal borders like T3 gold standard
-  Answer lines: paragraph border method (w:pBdr) — NEVER table cells
-  1-mark=1 line · 2-mark=2 lines · extended=3–4 lines
-
-CHER PANEL COLOURS v2.0:
-  C: header=#1A7A8A bg=#EBF6F8
-  H: header=#7C6FAB bg=#FAF5FF — LAVENDER (NEVER #553C9A)
-  E: header=#C2185B bg=#FFF0F5 border=#F48FB1 — NEVER white text
-  R: header=#92400E bg=#FFFBEB border=#FDE68A — NEVER white text
-
-FOOTER: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · Topic ${topic.n}: ${topic.name}"
-  ✗ NEVER "O-Level Chemistry" · ✗ NEVER split topic name
-
-VALIDATION: Read SKILL.md → Generate graphs → Build docx → validate.py → soffice PDF → inspect → share.`;
+Build now. Read SKILL.md first. Generate graphs first. Validate. PDF check. Share.`;
   }
 
   else if (file.n === 4) {
@@ -1136,26 +1095,7 @@ NOT IN COMBINED: Electrolysis · Equilibrium · Catalytic converters · Maxwell-
 ${qaChecklist}
 
 Build with: node build_t${topic.n}_slides.js
-Validate, convert to PDF, render thumbnails, inspect grid. Share when QA passes.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GOLD STANDARD PPTX LAYOUT RULES (F4)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CHER PILL COLOURS v2.0 — NON-NEGOTIABLE:
-  C: bg=#1A7A8A text=white
-  H: bg=#7C6FAB text=white — LAVENDER (NEVER #553C9A or #6A1B9A)
-  E: bg=#F48FB1 text=#C2185B — NEVER white text on E pill
-  R: bg=#FDE68A text=#92400E — NEVER white text on R pill
-
-PPTX RULES: NEVER # prefix on hex · NEVER reuse option objects · NEVER HeightRule
-  Each equation in a single addText() bounding box — NEVER split mid-formula
-  Footer: x:0, w:10, full width
-  "Topic ${topic.n}: ${topic.name}" as ONE text run — never split across calls
-  Diagram placeholders: dashed box + caption at BOTTOM
-
-FOOTER STRING: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · Topic ${topic.n}: ${topic.name}"
-  ✗ NEVER "O-Level Chemistry" in Combined files
-  ✗ NEVER split topic name across text runs`;
+Validate, convert to PDF, render thumbnails, inspect grid. Share when QA passes.`;
   }
 
   else if (file.n === 5) {
@@ -1221,22 +1161,7 @@ ${isotoperule}
 
 ${qaChecklist}
 
-All answers in SEAB mark scheme language — concise, specific, no vague phrasing.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GOLD STANDARD PPTX LAYOUT RULES (F5)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PILL TEXT COLOUR RULES — NON-NEGOTIABLE:
-  C: bg=#1A7A8A text=white
-  H: bg=#7C6FAB text=white — LAVENDER (NEVER #553C9A)
-  E: bg=#F48FB1 text=#C2185B — NEVER white on pastel pink
-  R: bg=#FDE68A text=#92400E — NEVER white on champagne
-
-PPTX RULES: NEVER # prefix on hex · NEVER reuse option objects · NEVER HeightRule
-  Footer must span full width (x:0, w:10)
-  "T${topic.n}: ${topic.name}" as ONE text run — never split
-
-FOOTER STRING: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · T${topic.n}: ${topic.name}"`;
+All answers in SEAB mark scheme language — concise, specific, no vague phrasing.`;
   }
 
   else if (file.n === 6) {
@@ -1288,31 +1213,7 @@ SCORE MESSAGES:
 RESULTS SCREEN: score circle + 3-stat grid (correct/wrong/%) + question review + CHER recap 5-6 bullets + Retry button.
 
 Single self-contained HTML. No external JS. DM Sans font. Mobile + desktop responsive.
-option buttons: min-height:48px; padding:12px 16px; white-space:normal
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GOLD STANDARD HTML LAYOUT RULES (F6)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PAGE STRUCTURE (top → bottom):
-  1. Sticky header: logo left + topic badge right
-               position:sticky; top:0; z-index:100; height:52px; background:var(--dark)
-  2. Hero: linear-gradient(135deg,#1A2E35 0%,#0F3040 100%)
-     All 4 CHER pills SOLID (never rgba):
-       C: bg:#1A7A8A color:#fff · H: bg:#7C6FAB color:#fff
-       E: bg:#FFF0F5 border:1.5px solid #F48FB1 color:#C2185B
-       R: bg:#FFFBEB border:1.5px solid #FDE68A color:#92400E
-  3. Quiz area: progress bar → question cards (one at a time) → results screen
-  4. Footer
-
-QUESTION CARD RULES:
-  ANSWER STORAGE: answer index in QUESTIONS object — NEVER hardcoded in onclick
-  CARD REBUILD: wrap.innerHTML on every new question — NEVER patch reused DOM
-  C panel: ALWAYS shown BEFORE answering (no spoilers)
-  H/E/R panels: ONLY shown AFTER answering
-
-FOOTER: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026"
-  + "Topic ${topic.n}: ${topic.name}" in white-space:nowrap span
-  ✗ NEVER "O-Level Chemistry" in Combined files · ✗ NEVER split topic name`;
+option buttons: min-height:48px; padding:12px 16px; white-space:normal`;
   }
 
   else if (file.n === 7) {
@@ -1325,89 +1226,37 @@ Syllabus: SEAB 2026 Combined Science Chemistry (5086/5087/5088)
 STEP 0a: Read /mnt/project/5086_y26_sy_comb_chem.pdf — extract LOs verbatim before writing content.
 STEP 0b: Read /mnt/project/learnfromcher_UniversalPatchPrompt_v1.pdf — apply all rules before building.
 
-POOL: 30 cards. Serve 20 per session via stratified sampling (8C + 6H + 4E + 2R). New Set draws fresh 20.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GOLD STANDARD LAYOUT — COPY EXACTLY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PAGE STRUCTURE (top → bottom):
-  1. Sticky header (dark bg): logo left · topic badge right
-  2. Hero screen (dark gradient): title, CHER pills, Start button
-  3. On Start — main area replaces hero:
-       a. Top bar: "Card X of 20" · progress bar · "N Known"
-       b. Status dots row (one dot per card, green=known gold=still)
-       c. PRIMARY CONTROLS ROW — ABOVE the card, always visible:
-            [← Prev] [✅ Known] [🔄 Still Learning] [Next →]
-       d. CARD (flip on tap) — below controls
-       e. UTILITY ROW — below card:
-            [🔀 Shuffle] [🎲 New Set] [📊 Summary]
-  4. Summary screen
-  5. Footer
-
-CRITICAL LAYOUT RULES:
-  ✗ NEVER place Prev/Next or Known/Still below the card — they get pushed off-screen on mobile
-  ✓ Primary controls (Prev/Known/Still/Next) ALWAYS above the card
-
-CARD CSS — NON-NEGOTIABLE:
-  .card-scene { width:100%; max-width:680px; perspective:1200px; cursor:pointer; }
-  .card-3d { width:100%; transform-style:preserve-3d; transition:transform .55s ease;
-             position:relative; min-height:200px; }
-  .card-face { backface-visibility:hidden; -webkit-backface-visibility:hidden;
-               width:100%; background:#fff; border-radius:16px;
-               box-shadow:0 4px 20px rgba(0,0,0,.1); overflow:hidden; }
-  .card-back-face { position:absolute; top:0; left:0; transform:rotateY(180deg); }
-  .card-3d.flipped { transform:rotateY(180deg); }
-
-  /* SCROLLABLE BODY — prevents tall answers from blocking controls */
-  .card-body { padding:16px 18px 18px; max-height:42vh;
-               overflow-y:auto; -webkit-overflow-scrolling:touch; }
-
-  ✗ NEVER use a fixed height on .card-wrap or .card-3d (e.g. height:300px is BANNED)
-  ✓ Use min-height:200px only — card grows with content, body scrolls if too tall
+POOL: 30 cards. Serve 20 per session (randomly shuffled). New Set draws fresh 20 from full pool.
 
 CARD STRUCTURE:
-  Front face: CHER strip (coloured) + card body (question text + "👆 Tap card to flip" hint)
-  Back face:  CHER strip (same colour) + card body (model answer — "scroll if needed ↓")
+  Front: question (SEAB-style)
+  Back: model answer (mark scheme language)
   Header strip colour by CHER type:
-    C: background:#1A7A8A (teal), label white
-    H: background:#7C6FAB (lavender), label white
-    E: background:#FFF0F5, border-bottom:2px solid #F48FB1, label color:#C2185B
-    R: background:#FFFBEB, border-bottom:2px solid #FDE68A, label color:#92400E
+    C: #1A7A8A (teal) · H: #7C6FAB (lavender) · E: #F48FB1 border / #C2185B text · R: #FDE68A border / #92400E text
   ✗ NEVER white text on E or R strips
 
-CRITICAL JS — THREE RULES:
-  1. Remove .flipped class BEFORE updating card content on Prev/Next — never show stale back face
-  2. Stratified sampling: sampleCards() must draw 8C + 6H + 4E + 2R then shuffle the combined array
-  3. reviewStill() filters session cards by stillSet, re-shuffles, resets index to 0
+CRITICAL JS: Remove .flipped class BEFORE updating card content on Prev/Next navigation.
+NEVER leave card showing back face from previous card.
 
 ${cssVariables}
 
-BUTTON STYLES:
-  All buttons: font-family:'DM Sans'; min-height:48px; padding:12px 16px;
-               white-space:nowrap; border-radius:10px; font-weight:700; border:none; cursor:pointer;
-  Prev/Next:   background:var(--teal); color:#fff; flex:1; min-width:100px
-  Known:       background:var(--green-lt); color:var(--green); border:2px solid var(--green-bd); flex:1
-  Still:       background:var(--gold-lt); color:var(--gold); border:2px solid var(--gold-bd); flex:1
-  Shuffle:     background:var(--cher-h-lt); color:var(--cher-h); border:2px solid var(--purple-bd)
-  New Set:     background:var(--dark); color:#fff
-  Summary:     background:var(--mid); color:#fff
+CONTROLS:
+  ✅ Known (green) / 🔄 Still Learning (gold) / Shuffle (var(--cher-h)) / Prev+Next (teal)
+  Progress bar fills as Known cards increase
+  Counter: "Card X of 20"
+  option buttons: min-height:48px; padding:12px 16px; white-space:normal
 
-SUMMARY SCREEN:
-  Score circle or stat boxes: Known count · Still Learning count · % mastery
-  Personalised message:
-    100%  → "Perfect! All cards known! 🎉 A1 Ready!"
-    ≥80%  → "Excellent! Nearly there — review the rest."
-    ≥60%  → "Good progress! Keep reviewing Still Learning cards."
-    <60%  → "Keep going! Revisit Still Learning cards and retry."
-  Must-know recap list (5–6 bullet points for the topic)
-  Buttons: "🔄 Review Still Learning" (gold) · "↺ New Session" (teal)
-  Hide "Review Still Learning" button if stillSet is empty
+SUMMARY SCREEN: Known count + Still Learning count + message + "Review Still Learning" button
+  100%  → "Perfect! All cards known! 🎉 A1 Ready!"
+  ≥80%  → "Excellent! Nearly there — review the rest."
+  ≥60%  → "Good progress! Keep reviewing Still Learning cards."
+  <60%  → "Keep going! Revisit Still Learning cards and retry."
 
-CARD CONTENT (stratified pool of 30):
-  12 × Definition cards (C — teal)   → serve 8 per session
-   9 × Explain-why cards (H — lavender) → serve 6 per session
-   6 × Equation/formula cards (E — pink) → serve 4 per session
-   3 × Spot-the-error cards (R — champagne) → serve 2 per session
+CARD CONTENT (20 cards matching File 5 distribution):
+  8 × Definition cards (C — teal)
+  6 × Explain-why cards (H — lavender)
+  4 × Equation/formula cards (E — pink)
+  2 × Spot-the-error cards (R — champagne)
 
 LEARNING OUTCOMES:
 ${losText}
@@ -1443,86 +1292,30 @@ STEP 0b: Read /mnt/project/learnfromcher_UniversalPatchPrompt_v1.pdf — apply a
 POOL: 35 blanks across 4 CHER passages. Serve 25 per session.
 New Set: re-shuffle full pool → different 25 blanks each session.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GOLD STANDARD LAYOUT — COPY EXACTLY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PAGE STRUCTURE (top → bottom):
-  1. Sticky header: logo left ("learn" var(--teal-md) + "fromcher.com" white on dark bg)
-               + topic badge right — position:sticky; top:0; z-index:100; height:52px
-  2. Hero screen: linear-gradient(135deg,#1A2E35 0%,#0F3040 100%)
-               Topic title · "O-Level Science (Chemistry) · SEAB 2026"
-               All 4 CHER pills SOLID (never rgba):
-                 C: bg:#1A7A8A color:#fff · H: bg:#7C6FAB color:#fff
-                 E: bg:#FFF0F5 border:1.5px solid #F48FB1 color:#C2185B
-                 R: bg:#FFFBEB border:1.5px solid #FDE68A color:#92400E
-               Start button (teal)
-  3. Main area (replaces hero on Start):
-       a. Score bar: "X / 25 correct" — hidden until Check Answers pressed
-       b. 4 CHER passage blocks in order (C → H → E → R)
-       c. Controls toolbar — STICKY at bottom of viewport (always visible while scrolling):
-            [✅ Check Answers] [💡 Hint] [👁 Show All] [↺ Reset] [🔀 New Set]
-  4. Footer
-
-CRITICAL LAYOUT RULES:
-  ✓ Controls toolbar must be position:sticky; bottom:0; background:var(--dark); z-index:50
-    so students can always access Check/Hint/Reset without scrolling to the bottom
-  ✗ NEVER place all controls only at the bottom of the page with no sticky behaviour
-
-PASSAGE BLOCK STRUCTURE (repeat for each CHER type):
-  .passage-block {
-    border-radius:12px; overflow:hidden; margin-bottom:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,.07);
-  }
-  .passage-header {
-    padding:12px 18px; display:flex; align-items:center; gap:10px;
-    font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.6px;
-  }
-  .passage-body { background:#fff; padding:20px 22px; line-height:1.9; font-size:15px; }
-
-PASSAGE HEADER COLOURS (solid — NEVER rgba):
-  C: background:#EBF6F8; border-left:4px solid #1A7A8A; color:#0F5A67
-  H: background:#FAF5FF; border-left:4px solid #7C6FAB; color:#7C6FAB  ← NEVER #553C9A/#6A1B9A
-  E: background:#FFF0F5; border-left:4px solid #F48FB1; color:#C2185B  ← NEVER white text
-  R: background:#FFFBEB; border-left:4px solid #FDE68A; color:#92400E  ← NEVER white text
-
-BLANK INPUT STYLING:
-  input.blank {
-    font-family:'DM Mono',monospace; font-size:14px;
-    border:none; border-bottom:2px solid var(--teal);
-    background:transparent; min-width:80px; padding:2px 4px;
-    text-align:center; outline:none; color:var(--dark);
-  }
-  Correct:   border-bottom-color:var(--green); background:var(--green-lt); color:var(--green)
-  Incorrect: border-bottom-color:var(--red); background:var(--red-lt)
-             + append correct answer in green: <span class="correct-ans">✓ [answer]</span>
-  ⭐ badge on commonly-tested blanks: small inline star badge before the blank
-
-CONTROLS TOOLBAR:
-  position:sticky; bottom:0; background:var(--dark); padding:10px 16px;
-  display:flex; flex-wrap:wrap; gap:8px; justify-content:center; z-index:50;
-  All buttons: font-family:'DM Sans'; min-height:44px; padding:10px 16px;
-               border-radius:8px; font-weight:700; font-size:13px; cursor:pointer;
-  Check Answers: background:var(--teal); color:#fff; border:none
-  Hint:          background:var(--cher-h-lt); color:var(--cher-h); border:2px solid var(--purple-bd)
-  Show All:      background:var(--cher-r-bg); color:var(--cher-r-text); border:2px solid var(--cher-r-bd)
-  Reset:         background:var(--off); color:var(--mid); border:2px solid var(--border)
-  New Set:       background:var(--dark); color:#fff; border:1px solid rgba(255,255,255,.2)
-
-JS RULES:
-  ✓ Hint reveals first letter only — not the full word
-  ✓ Show All fills all inputs and marks them as revealed (not graded)
-  ✓ Reset clears all inputs, removes all feedback, hides score bar
-  ✓ New Set reshuffles pool and draws a fresh 25 — re-renders all passages
-  ✓ Accept minor spelling variations via aliases array per blank
-  ✓ Score shown as "X / 25" after Check Answers
-
-${cssVariables}
-
 4 PASSAGES (CHER structure):
   C — Concept passage: core definitions and mechanisms
   H — Keywords passage: exact SEAB exam keyword phrases
   E — Application passage: exam reasoning steps (Singapore context: ${topic.sg[0]})
   R — Recap passage: highest-yield exam facts
+
+PASSAGE HEADER COLOURS (solid — never rgba):
+  C: border-left:4px solid var(--teal); background:var(--teal-lt)
+  H: border-left:4px solid var(--cher-h); background:var(--cher-h-lt)        /* #7C6FAB lavender */
+  E: border-left:4px solid var(--cher-e-bd); background:var(--cher-e-bg)     /* #F48FB1 / #FFF0F5 */
+  R: border-left:4px solid var(--cher-r-bd); background:var(--cher-r-bg)     /* #FDE68A / #FFFBEB */
+  ✗ NEVER white text on E or R passage headers
+
+${cssVariables}
+
+BLANK INPUTS: inline, DM Mono, border-bottom:2px solid var(--teal), no box border, min-width:80px, white-space:nowrap on the label before each blank.
+Correct: green bottom-border + var(--green-lt) bg.
+Incorrect: red border + shows correct answer appended in green.
+
+CONTROLS:
+  ✅ Check Answers (teal) | 💡 Hint — first letter only (var(--cher-h)) | 👁 Show All (var(--cher-r-text)) | ↺ Reset | 🔀 New Set
+  Score: "X / 25" after checking.
+  Accept minor spelling variations via aliases array.
+  ⭐ Commonly Tested flag on high-frequency blanks.
 
 LEARNING OUTCOMES:
 ${losText}
@@ -1540,10 +1333,8 @@ ${precisionRules}
 
 ${renderingRules}
 
-Single self-contained HTML. No external JS. DM Sans + DM Mono. Mobile + desktop.
-Hero: linear-gradient(135deg, #1A2E35 0%, #0F3040 100%) with all 4 CHER pills (solid colours).
-FOOTER LINE 1: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026"
-FOOTER LINE 2: Topic ${topic.n}: ${topic.name} — wrap in white-space:nowrap span, NEVER split across lines.`;
+Single self-contained HTML. No external JS. DM Sans + DM Mono.
+Hero: linear-gradient(135deg, #1A2E35 0%, #0F3040 100%) with all 4 CHER pills (solid colours).`;
   }
 
   else if (file.n === 9) {
@@ -1562,85 +1353,26 @@ STEP 0b: Read /mnt/project/learnfromcher_UniversalPatchPrompt_v1.pdf — apply a
   Round 3 (E): Exam question stems → Correct answer/reasoning (application)
   Round 4 (R): Student answer statements → Correct ✅ or Incorrect ❌ (spot error)
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GOLD STANDARD LAYOUT — COPY EXACTLY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PAGE STRUCTURE (top → bottom):
-  1. Sticky header: logo left + topic badge right
-               position:sticky; top:0; z-index:100; background:var(--dark); height:52px
-  2. Hero screen: linear-gradient(135deg,#1A2E35 0%,#0F3040 100%)
-               All 4 CHER pills SOLID (never rgba):
-                 C: bg:#1A7A8A color:#fff · H: bg:#7C6FAB color:#fff
-                 E: bg:#FFF0F5 border:1.5px solid #F48FB1 color:#C2185B
-                 R: bg:#FFFBEB border:1.5px solid #FDE68A color:#92400E
-               "4 rounds · 6–8 pairs per round · Tap to match" meta text
-               Start button (teal)
-  3. Round sections (one at a time OR all visible — choose one approach and be consistent):
-       Round header strip → term chips pool → drop zones → Check Round button
-  4. Summary screen (after all rounds complete)
-  5. Footer
+INTERACTION:
+  Mobile: tap-to-select term → tap drop zone (PRIMARY — must work perfectly)
+  Desktop: HTML5 drag-and-drop (secondary)
+  Wrong match: red flash + shake animation + return to pool after 500ms
+  Correct match: green highlight stays
 
-ROUND HEADER STRUCTURE:
-  .round-header {
-    padding:14px 18px; border-radius:10px 10px 0 0;
-    display:flex; align-items:center; justify-content:space-between;
-  }
-  COLOURS (solid — NEVER rgba):
-    Round 1 (C): background:#EBF6F8; border-left:4px solid #1A7A8A; color:#0F5A67
-    Round 2 (H): background:#FAF5FF; border-left:4px solid #7C6FAB; color:#7C6FAB  ← NEVER #553C9A
-    Round 3 (E): background:#FFF0F5; border-left:4px solid #F48FB1; color:#C2185B  ← NEVER white
-    Round 4 (R): background:#FFFBEB; border-left:4px solid #FDE68A; color:#92400E  ← NEVER white
-
-TERM CHIPS:
-  .chip {
-    display:inline-flex; align-items:center; padding:10px 16px;
-    border-radius:8px; min-height:44px; white-space:normal; word-break:normal;
-    background:#fff; border:2px solid var(--border); cursor:pointer;
-    font-size:14px; font-weight:500; transition:all .15s;
-  }
-  Selected: border-color:var(--teal); background:var(--teal-lt); color:var(--teal-dk)
-  ✗ NEVER fixed width on chips — let content determine width
-  ✗ NEVER overflow:hidden or text-overflow:ellipsis on chips
-
-DROP ZONES:
-  .drop-zone {
-    min-height:48px; border:2px dashed var(--border); border-radius:8px;
-    padding:10px 14px; background:var(--off); transition:all .2s;
-    display:flex; align-items:center; font-size:14px;
-  }
-  Filled correct: border-color:var(--green); background:var(--green-lt); color:var(--green); border-style:solid
-  Filled wrong:   border-color:var(--red); background:var(--red-lt) — shake then reset after 500ms
-
-INTERACTION — MOBILE TAP IS PRIMARY:
-  Step 1: Tap a chip → it gets .selected class (teal border/bg)
-  Step 2: Tap a drop zone → selected chip snaps into it
-  Step 3a CORRECT: green highlight, chip locked in place
-  Step 3b WRONG:   red flash + shake animation → chip returns to pool after 500ms
-  Desktop drag-and-drop: secondary, must not interfere with tap flow
-  ✗ NEVER require drag on mobile — tap-to-select is the primary UX
-
-SHAKE ANIMATION (mandatory — add if missing):
-  @keyframes shake {
-    0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);}
-    40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);}
-  }
-
-PER-ROUND CONTROLS:
-  [Check Round] button (teal) — only active when all drop zones filled
-  Score display: "X / Y correct"
-  [Try Again] button (var(--mid)) — resets that round only, chips return to pool
-
-SUMMARY SCREEN:
-  Cumulative score across all rounds.
-  Personalised message:
-    100%  → "Perfect! A1 Ready — you matched everything correctly!"
-    ≥80%  → "Excellent! Strong performance. Review any misses."
-    ≥60%  → "Good Work! Focus on the rounds you found tricky."
-    ≥40%  → "Getting There — retry the rounds with mistakes."
-    <40%  → "Keep Practising — go back to your notes and try again."
-  [Play Again] button (teal) resets all rounds from scratch.
+ROUND HEADER COLOURS (solid — never rgba):
+  C: background:var(--teal-lt); border-left:4px solid var(--teal)
+  H: background:var(--cher-h-lt); border-left:4px solid var(--cher-h)      /* #7C6FAB lavender */
+  E: background:var(--cher-e-bg); border-left:4px solid var(--cher-e-bd)   /* #FFF0F5 / #F48FB1 */
+  R: background:var(--cher-r-bg); border-left:4px solid var(--cher-r-bd)   /* #FFFBEB / #FDE68A */
+  ✗ NEVER white text on E or R round headers
 
 ${cssVariables}
+
+SHAKE ANIMATION:
+@keyframes shake {
+  0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);}
+  40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);}
+}
 
 LEARNING OUTCOMES (content for pairs):
 ${losText}
@@ -1654,24 +1386,40 @@ ${commonText}
 STARRED (⭐ badge on high-frequency pairs):
 ${starredText}
 
+SUMMARY: cumulative score + personalised message.
+  100%  → "Perfect! A1 Ready — you matched everything correctly!"
+  ≥80%  → "Excellent! Strong performance. Review any misses."
+  ≥60%  → "Good Work! Focus on the rounds you found tricky."
+  ≥40%  → "Getting There — retry the rounds with mistakes."
+  <40%  → "Keep Practising — go back to your notes and try again."
+
 ${precisionRules}
 
 ${renderingRules}
 
 Single self-contained HTML. No external JS. DM Sans + DM Mono. Mobile + desktop.
-Hero: linear-gradient(135deg, #1A2E35 0%, #0F3040 100%) with all 4 CHER pills (solid colours).
-FOOTER LINE 1: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026"
-FOOTER LINE 2: Topic ${topic.n}: ${topic.name} — wrap in white-space:nowrap span, NEVER split across lines.`;
+Hero: linear-gradient(135deg, #1A2E35 0%, #0F3040 100%) with all 4 CHER pills (solid colours).`;
   }
 
   const syllabusStep = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 0 — READ SYLLABUS FIRST (MANDATORY)
+MANDATORY PRE-BUILD READS — DO THESE BEFORE WRITING ANY CONTENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Before writing ANY content, read the SEAB syllabus PDF:
-  Combined: /mnt/project/5086_y26_sy_comb_chem.pdf
-Extract the exact Learning Outcomes for Topic ${topic.n}: ${topic.name} verbatim.
-Do NOT rely on memory or the LOs listed below alone — verify against the PDF.
-Only proceed to build after confirming full LO coverage.
+STEP 0a — Read MASTER INSTRUCTIONS:
+  /mnt/project/MASTER_INSTRUCTIONS_v3_2.pdf
+  This is the authoritative source for ALL content, brand, colour, and format rules.
+  Read ALL relevant sections before writing anything.
+
+STEP 0b — Read UNIVERSAL PATCH PROMPT:
+  /mnt/project/learnfromcher_UniversalPatchPrompt_v1.pdf
+  Apply ALL rules (Steps 1–6, R1–R7) to every file you build.
+
+STEP 0c — Read SEAB SYLLABUS PDF:
+  /mnt/project/5086_y26_sy_comb_chem.pdf
+  Extract exact LOs for Topic ${topic.n}: ${topic.name} verbatim.
+  SYLLABUS OVERRIDES master instructions where they conflict.
+  Do NOT rely on memory or dashboard LOs alone — verify against the PDF.
+
+Only proceed to build after completing ALL THREE reads.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
   return syllabusStep + specific;
@@ -1689,58 +1437,86 @@ function generateCCPrompt(topic, ccFile) {
   const starredText = topic.starred.map(s => `  ⭐ ${s}`).join('\n');
 
   const ccVisual = `CRASH COURSE VISUAL SYSTEM:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CSS :root BLOCK — COPY EXACTLY INTO EVERY CC FILE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+:root{
+  --teal:#1A7A8A;--teal-dk:#0F5A67;--teal-md:#2A9BAD;--teal-lt:#EBF6F8;
+  --dark:#1A2E35;--mid:#4A5568;--light:#718096;--off:#F7FAFC;--white:#fff;--border:#CBD5E0;
+  --green:#276749;--green-lt:#F0FFF4;--green-bd:#C6F6D5;
+  --red:#C53030;--red-lt:#FFF5F5;--red-bd:#FED7D7;
+  --gold:#B7791F;--gold-lt:#FFFFF0;--gold-bd:#FAF089;
+  --purple:#6A1B9A;--purple-lt:#FAF5FF;--purple-bd:#D6BCFA;
+  --cher-h:#7C6FAB;--cher-h-lt:#FAF5FF;--cher-h-dk:#4A0080;
+  --cher-e-bd:#F48FB1;--cher-e-text:#C2185B;--cher-e-bg:#FFF0F5;
+  --cher-r-bd:#FDE68A;--cher-r-text:#92400E;--cher-r-bg:#FFFBEB;
+  --cher-c:var(--teal);--cher-c-lt:var(--teal-lt);--cher-c-dk:var(--teal-dk);
+  --coral:#E8604C;--badge-com:#C05621;
+  --orange:#92400E;--orange-lt:#FFFBEB;--orange-bd:#FDE68A;
+  --badge-app:#2C5282;--badge-ded:#553C9A;
+}
+
+COLOURS:
 Hero background: linear-gradient(135deg, #1A1A2E 0%, #2D1B1B 100%)
 Exam accent: #C05621 (var(--badge-com))
-Text weight: 500
-Line spacing: 1.45
 Print files (CC0, CC1): white background
-Interactive files (CC3, CC4, CC5): page bg #F0F4F8
-CHER panels: collapsed (left border 4px solid only, light bg fill, label inline)
-H panels: border #7C6FAB, bg #FAF5FF — NEVER old #6A1B9A or #553C9A
-E panels: border #F48FB1, bg #FFF0F5, text #C2185B — NEVER white text
-R panels: border #FDE68A, bg #FFFBEB, text #92400E — NEVER white text
-Keywords: DM Mono, bg #EBF6F8, colour #0F5A67 (inline code-style)
-Common errors: ✗ [wrong phrase] → ✓ [correct SEAB phrase] one-liners
+Interactive files (CC2–CC5, F0): page bg #F0F4F8
+CHER panels: left border 4px solid + light bg fill
+  H panels: border var(--cher-h) #7C6FAB, bg var(--cher-h-lt) — NEVER #6A1B9A or #553C9A
+  E panels: border var(--cher-e-bd) #F48FB1, bg var(--cher-e-bg), text var(--cher-e-text) #C2185B — NEVER white text
+  R panels: border var(--cher-r-bd) #FDE68A, bg var(--cher-r-bg), text var(--cher-r-text) #92400E — NEVER white text
+Keywords: DM Mono, bg #EBF6F8, colour #0F5A67
 Font: DM Sans + DM Mono
-CHER pills: solid background — NEVER rgba or opacity<1`;
 
-  const ccLayoutRules = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GOLD STANDARD LAYOUT RULES — ALL CC FILES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STICKY HEADER (ALL CC files including print):
-  position:sticky; top:0; z-index:100; background:var(--dark); height:52px;
-  display:flex; align-items:center; justify-content:space-between; padding:0 20px;
-  Logo left: "learn" in var(--teal-md) + "fromcher.com" in #fff — font-weight:800
-  Badge right: topic name pill — background:rgba(26,122,138,.25); border:1px solid rgba(42,155,173,.4);
-               color:var(--teal-md); font-size:11px; font-weight:700; border-radius:20px; white-space:nowrap
+HERO CHER PILLS — 2-ROW LAYOUT (confirmed gold standard)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Row 1: C — Concept + H — Keywords
+Row 2: E — Example + R — Recap
 
-HERO (interactive CC files — CC2, CC3, CC4, CC5, F0):
-  linear-gradient(135deg, #1A1A2E 0%, #2D1B1B 100%)
-  All 4 CHER pills SOLID colours (never rgba, never opacity<1):
-    C: background:#1A7A8A; color:#fff
-    H: background:#7C6FAB; color:#fff
-    E: background:#FFF0F5; border:1.5px solid #F48FB1; color:#C2185B
-    R: background:#FFFBEB; border:1.5px solid #FDE68A; color:#92400E
-  Start/Begin button: background:var(--teal); color:#fff; min-height:48px; border-radius:10px
+CSS:
+.cher-pills { display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:28px; }
+.pill-row   { display:flex; gap:8px; justify-content:center; }
+.pill-c { background:var(--teal);       color:#fff; border:none; }
+.pill-h { background:var(--cher-h);     color:#fff; border:none; }
+.pill-e { background:var(--cher-e-bd);  color:var(--cher-e-text); border:none; }
+.pill-r { background:var(--cher-r-bd);  color:var(--cher-r-text); border:none; }
 
-BUTTONS (all interactive CC files):
-  All: font-family:'DM Sans'; min-height:44px; padding:10px 16px;
-       border-radius:8px; font-weight:700; cursor:pointer; white-space:nowrap
+HTML:
+<div class="cher-pills">
+  <div class="pill-row"><span class="pill pill-c">C — Concept</span><span class="pill pill-h">H — Keywords</span></div>
+  <div class="pill-row"><span class="pill pill-e">E — Example</span><span class="pill pill-r">R — Recap</span></div>
+</div>
+
+✗ NEVER all 4 pills in one flex-wrap row
+✗ NEVER border on any hero pill
+✗ NEVER white text on E or R pills
+✗ NEVER rgba() on pills — solid background-color only
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STICKY BOTTOM CONTROLS (interactive CC files: CC2, CC3, CC4, CC5, F0 MCQ)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Controls (Check Answers / Submit / Next / Reset etc.) must be in a STICKY TOOLBAR at the BOTTOM — never floating at the top of the page.
+
+CSS:
+.sticky-toolbar {
+  position:sticky; bottom:0; z-index:90;
+  background:var(--dark); padding:10px 16px;
+  box-shadow:0 -2px 12px rgba(0,0,0,.25);
+}
+.toolbar-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.toolbar-row-2 { margin-top:6px; }
+
+Button styles (all border:none except secondary off-white buttons):
   Primary action: background:var(--teal); color:#fff; border:none
-  Secondary:      background:var(--off); color:var(--mid); border:2px solid var(--border)
-  ✗ NEVER fixed heights that cut off button text on mobile
+  Secondary (Reset/Prev): background:var(--off); color:var(--dark); border:2px solid var(--border)
+  All buttons: min-height:44px; padding:10px 16px; border-radius:8px; font-weight:700; font-family:'DM Sans'
 
-SCROLLABLE CONTENT AREAS:
-  ✗ NEVER overflow:hidden on any content container that holds student-readable text
-  ✓ All passage/content areas: overflow-y:auto; max-height where needed on mobile
-  ✓ All text containers: word-break:normal; overflow-wrap:break-word
+Page bottom padding: padding-bottom:140px on .page so content never hides behind toolbar.
+Toolbar hidden on page load (style="display:none") — shown via JS when activity starts.
 
-FOOTER (ALL CC files):
-  background:var(--dark); padding:14px 20px; text-align:center; font-size:11px; color:var(--light)
-  LINE 1: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026"
-  LINE 2: Topic ${topic.n}: ${topic.name} — wrapped in <span style="white-space:nowrap">
-  ✗ NEVER "O-Level Chemistry" in Combined files (Pure only)
-  ✗ NEVER split topic name across two lines`;
+✗ NEVER place action buttons above the content passages`;
 
   const isotoperule = `CRITICAL — ISOTOPES: "same number of valence electrons" ALWAYS.
 NEVER "same electrons" or "same number of electrons".`;
@@ -1805,9 +1581,11 @@ ${starredText}
 ${isotoperule}
 
 Single self-contained HTML. No external JS. DM Sans font. Mobile + desktop.
-${ccLayoutRules}
 Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"
-${ccLayoutRules}`;
+
+${ccVisual}
+
+${ccPrecisionRules}`;
   }
 
   else if (ccFile.n === 0) {
@@ -1843,9 +1621,9 @@ ${ccVisual}
 ${isotoperule}
 
 Single self-contained HTML. Must print cleanly as 2–3 page PDF from browser.
-${ccLayoutRules}
 Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"
-${ccLayoutRules}`;
+
+${ccPrecisionRules}`;
   }
 
   else if (ccFile.n === 1) {
@@ -1878,8 +1656,9 @@ ${ccVisual}
 ${isotoperule}
 
 Single self-contained HTML. White background. Print-optimised.
-${ccLayoutRules}
-Footer: "learnfromcher.com · CC Cheat Sheet · SEAB 2026 · Topic ${topic.n}: ${topic.name}"`;
+Footer: "learnfromcher.com · CC Cheat Sheet · SEAB 2026 · Topic ${topic.n}: ${topic.name}"
+
+${ccPrecisionRules}`;
   }
 
   else if (ccFile.n === 2) {
@@ -1910,9 +1689,9 @@ ${isotoperule}
 
 Interactive: students tap/click skeleton blanks to reveal correct phrasing.
 Single self-contained HTML. Mobile + desktop.
-${ccLayoutRules}
 Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"
-${ccLayoutRules}`;
+
+${ccPrecisionRules}`;
   }
 
   else if (ccFile.n === 3) {
@@ -1948,9 +1727,9 @@ ${ccVisual}
 ${isotoperule}
 
 Single self-contained HTML. Mobile + desktop.
-${ccLayoutRules}
 Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"
-${ccLayoutRules}`;
+
+${ccPrecisionRules}`;
   }
 
   else if (ccFile.n === 4) {
@@ -1988,9 +1767,9 @@ ${ccVisual}
 ${isotoperule}
 
 Single self-contained HTML. Mobile + desktop.
-${ccLayoutRules}
 Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"
-${ccLayoutRules}`;
+
+${ccPrecisionRules}`;
   }
 
   else if (ccFile.n === 5) {
@@ -2039,19 +1818,30 @@ ${ccVisual}
 ${isotoperule}
 
 Single self-contained HTML. No external JS. Mobile + desktop.
-${ccLayoutRules}
 Footer: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026\nTopic ${topic.n}: ${topic.name} (keep topic name on one line — never split)"
-${ccLayoutRules}`;
+
+${ccPrecisionRules}`;
   }
 
   const syllabusStep = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 0 — READ SYLLABUS FIRST (MANDATORY)
+MANDATORY PRE-BUILD READS — DO THESE BEFORE WRITING ANY CONTENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Before writing ANY content, read the SEAB syllabus PDF:
-  Combined: /mnt/project/5086_y26_sy_comb_chem.pdf
-Extract the exact Learning Outcomes for Topic ${topic.n}: ${topic.name} verbatim.
-Do NOT rely on memory or the LOs listed below alone — verify against the PDF.
-Only proceed to build after confirming full LO coverage.
+STEP 0a — Read MASTER INSTRUCTIONS:
+  /mnt/project/MASTER_INSTRUCTIONS_v3_2.pdf
+  This is the authoritative source for ALL content, brand, colour, and format rules.
+  Read ALL relevant sections before writing anything.
+
+STEP 0b — Read UNIVERSAL PATCH PROMPT:
+  /mnt/project/learnfromcher_UniversalPatchPrompt_v1.pdf
+  Apply ALL rules (Steps 1–6, R1–R7) to every file you build.
+
+STEP 0c — Read SEAB SYLLABUS PDF:
+  /mnt/project/5086_y26_sy_comb_chem.pdf
+  Extract exact LOs for Topic ${topic.n}: ${topic.name} verbatim.
+  SYLLABUS OVERRIDES master instructions where they conflict.
+  Do NOT rely on memory or dashboard LOs alone — verify against the PDF.
+
+Only proceed to build after completing ALL THREE reads.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
   return syllabusStep + specific;
@@ -2291,13 +2081,18 @@ function switchMainTab(tab) {
   currentMainTab = tab;
   document.getElementById('weeklyTabContent').style.display = tab === 'weekly' ? 'block' : 'none';
   document.getElementById('ccTabContent').style.display = tab === 'cc' ? 'block' : 'none';
+  document.getElementById('patchTabContent').style.display = tab === 'patch' ? 'block' : 'none';
+  document.getElementById('filterBarWrap').style.display = tab === 'patch' ? 'none' : 'flex';
   document.getElementById('tabWeekly').className = 'tab-toggle-btn' + (tab === 'weekly' ? ' active' : '');
   document.getElementById('tabCC').className = 'tab-toggle-btn' + (tab === 'cc' ? ' cc-active' : '');
-  // Update filter bar reset label context
-  document.querySelector('#filterBarWrap .filter-btn[onclick="confirmReset()"]').title =
-    tab === 'weekly' ? 'Reset Weekly Tuition statuses' : 'Reset Crash Course statuses';
-  updateStats();
+  document.getElementById('tabPatch').className = 'tab-toggle-btn' + (tab === 'patch' ? ' patch-active' : '');
+  if (tab !== 'patch') {
+    document.querySelector('#filterBarWrap .filter-btn[onclick="confirmReset()"]').title =
+      tab === 'weekly' ? 'Reset Weekly Tuition statuses' : 'Reset Crash Course statuses';
+    updateStats();
+  }
   if (tab === 'cc') { renderCCGrid(); renderAssessments(); }
+  if (tab === 'patch') { renderPatchTab(); }
 }
 
 function setFilter(f) {
@@ -2598,7 +2393,7 @@ function renderModalBody() {
 }
 
 function renderStatusBtns(topicN, fileN) {
-  if (String(topicN) === '3') {
+  if (topicN === 3) {
     document.getElementById('statusBtns').innerHTML = `<span style="font-size:12px;color:var(--amber);font-weight:700;">⭐ Gold Standard — T3 locked as Done</span>`;
     return;
   }
@@ -2956,6 +2751,526 @@ renderGrid();
 updateStats();
 renderCCGrid();
 renderAssessments();
+
+// ════════════════════════════════════════════════════════
+// PATCH PROMPTS TAB
+// ════════════════════════════════════════════════════════
+const PATCH_DATA = [
+  {
+    id:'f1', group:'Weekly Files', label:'F1 — Lesson Notes', icon:'📝', ext:'DOCX',
+    prompt:`You are patching an existing learnfromcher.com F1 Lesson Notes .docx file. Read it fully before making any changes. Fix format only — do NOT change topic content unless a precision rule is violated.
+
+STEP 1 — CHER PANEL COLOURS v3.2
+  C: header=#1A7A8A  bg=#EBF6F8
+  H: header=#7C6FAB  bg=#FAF5FF  ← LAVENDER — never #553C9A or #6A1B9A
+  E: header=#C2185B  bg=#FFF0F5  border=#F48FB1  ← NEVER white text
+  R: header=#92400E  bg=#FFFBEB  border=#FDE68A  ← NEVER white text
+  ⚠ Misconception: header=#C53030  bg=#FFF5F5
+  ⭐ Commonly Tested: header=#92400E  bg=#FFFBEB
+
+STEP 2 — FOOTER (every page)
+  Combined: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · Topic N: [Name]"
+  Pure:     "learnfromcher.com · O-Level Chemistry · SEAB 2026 · Unit N: [Name]"
+  ✗ Never "O-Level Chemistry" in Combined files
+  ✗ Never split topic name across lines
+
+STEP 3 — SEAB YEAR: replace every "2025" with "2026"
+
+STEP 4 — SUBSCRIPTS/SUPERSCRIPTS
+  ONE method only: Unicode (H₂O, CO₂) OR HTML <sub>/<sup> — never mix in same file
+  Audit: H2O, CO2, SO4, NH4, Fe2, Fe3, Ca2, Mg2 — fix all plain-text versions
+
+STEP 5 — CONTENT PRECISION
+  ✗ Isotopes: "same number of valence electrons" — NEVER "same electrons"
+  ✗ CO₂ limewater: "white precipitate formed in limewater" — NEVER "turns milky"
+  ✗ Molar volume: 24 dm³ — NEVER 22.4 dm³
+  ✗ Ionic bonding: must include "oppositely-charged"
+  ✗ Covalent melting: "weak intermolecular forces overcome" — NEVER "covalent bonds break"
+  ✗ State change: "forces of attraction between particles are overcome" — NEVER "bonds break"
+  ✗ Rate: "higher frequency of effective collisions between reacting particles"
+  ✗ Alloys (T4) ALL FOUR: Brass (Cu+Zn) · Bronze (Cu+Sn) · Steel (Fe+C) · Stainless steel (Fe+C+Cr)
+  ✗ Remove out-of-syllabus Combined content entirely — do not footnote
+
+FILE: F1 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'f2', group:'Weekly Files', label:'F2 — Worksheet', icon:'📋', ext:'DOCX',
+    prompt:`You are patching an existing learnfromcher.com F2 Worksheet .docx file. Fix format only.
+
+STEP 1 — CHER LEGEND ROW
+  Verify CHER legend pills appear below the header: C teal · H lavender · E pink · R champagne
+  Add if missing.
+
+STEP 2 — QUESTION TYPE TAGS
+  Each MCQ must have a tag: [⭐ Recall] / [🧪 Application] / [🔍 Deduction] / [🇸🇬 SG Context]
+  Add if missing.
+
+STEP 3 — ANSWER LINES
+  Use paragraph border method (w:pBdr) — NEVER table cells for answer lines
+  1-mark = 1 line · 2-mark = 2 lines · extended = 3–4 lines
+
+STEP 4 — CHER PANEL COLOURS (same as F1 above)
+  H: #7C6FAB lavender · E: #FFF0F5 bg/#F48FB1 border · R: #FFFBEB bg/#FDE68A border
+  NEVER white text in E or R panels
+
+STEP 5 — FOOTER + SEAB YEAR (same as F1 above)
+
+STEP 6 — CONTENT PRECISION (same as F1 above)
+
+FILE: F2 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'f4', group:'Weekly Files', label:'F4 — PPT Slides', icon:'🎨', ext:'PPTX',
+    prompt:`You are patching an existing learnfromcher.com F4 PowerPoint Slides .pptx file. Fix format only.
+
+STEP 1 — CHER PILL COLOURS ON SLIDES (v3.2)
+  C: bg=#1A7A8A  text=white
+  H: bg=#7C6FAB  text=white  ← LAVENDER — never #553C9A or #6A1B9A
+  E: bg=#F48FB1  text=#C2185B  ← NEVER white text on E pill
+  R: bg=#FDE68A  text=#92400E  ← NEVER white text on R pill
+
+STEP 2 — CHER PANEL COLOURS ON SLIDES
+  C bg=#EBF6F8 · H bg=#FAF5FF · E bg=#FFF0F5/border=#F48FB1 · R bg=#FFFBEB/border=#FDE68A
+
+STEP 3 — FOOTER (every slide)
+  Combined: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · Topic N: [Name]"
+  Must span full slide width (x:0, w:10)
+  "Topic N: [Name]" as ONE text run — never split across calls
+
+STEP 4 — SEAB YEAR: replace every "2025" with "2026"
+
+STEP 5 — SUBSCRIPTS/SUPERSCRIPTS (PPTX only)
+  Use addText with baseline offset — NEVER Unicode in PPTX (renders inconsistently across OS)
+
+STEP 6 — CONTENT PRECISION (same as F1 above)
+
+FILE: F4 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'f5', group:'Weekly Files', label:'F5 — Flashcard PPTX', icon:'🃏', ext:'PPTX',
+    prompt:`You are patching an existing learnfromcher.com F5 Flashcard PPTX file. Fix format only.
+
+STEP 1 — CHER PILL COLOURS ON CARDS (v3.2)
+  C: bg=#1A7A8A  text=white
+  H: bg=#7C6FAB  text=white  ← LAVENDER — never #553C9A or #6A1B9A
+  E: bg=#F48FB1  text=#C2185B  ← NEVER white text on E pill
+  R: bg=#FDE68A  text=#92400E  ← NEVER white text on R pill
+
+STEP 2 — CARD HEADER PANEL COLOURS
+  C: header bg=#1A7A8A  panel bg=#EBF6F8
+  H: header bg=#7C6FAB  panel bg=#FAF5FF  ← LAVENDER
+  E: header bg=#C2185B  panel bg=#FFF0F5  border=#F48FB1  ← NEVER white text in E panel
+  R: header bg=#92400E  panel bg=#FFFBEB  border=#FDE68A  ← NEVER white text in R panel
+
+STEP 3 — FOOTER (every card)
+  Combined: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · Topic N: [Name]"
+  "Topic N: [Name]" as ONE text run — never split
+
+STEP 4 — SEAB YEAR: replace every "2025" with "2026"
+
+STEP 5 — CONTENT PRECISION (same as F1 above)
+
+FILE: F5 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'f6', group:'Weekly Files', label:'F6 — Interactive Quiz', icon:'🧪', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com F6 Interactive Quiz .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK ENTIRELY
+:root{
+  --teal:#1A7A8A;--teal-dk:#0F5A67;--teal-md:#2A9BAD;--teal-lt:#EBF6F8;
+  --dark:#1A2E35;--mid:#4A5568;--light:#718096;--off:#F7FAFC;--white:#fff;--border:#CBD5E0;
+  --green:#276749;--green-lt:#F0FFF4;--green-bd:#C6F6D5;
+  --red:#C53030;--red-lt:#FFF5F5;--red-bd:#FED7D7;
+  --gold:#B7791F;--gold-lt:#FFFFF0;--gold-bd:#FAF089;
+  --purple:#6A1B9A;--purple-lt:#FAF5FF;--purple-bd:#D6BCFA;
+  --cher-h:#7C6FAB;--cher-h-lt:#FAF5FF;--cher-h-dk:#4A0080;
+  --cher-e-bd:#F48FB1;--cher-e-text:#C2185B;--cher-e-bg:#FFF0F5;
+  --cher-r-bd:#FDE68A;--cher-r-text:#92400E;--cher-r-bg:#FFFBEB;
+  --cher-c:var(--teal);--cher-c-lt:var(--teal-lt);--cher-c-dk:var(--teal-dk);
+  --coral:#E8604C;--badge-com:#C05621;
+  --orange:#92400E;--orange-lt:#FFFBEB;--orange-bd:#FDE68A;
+  --badge-app:#2C5282;--badge-ded:#553C9A;
+}
+
+STEP 2 — HERO CHER PILLS (2-row layout)
+Row 1: C+H · Row 2: E+R
+CSS: .cher-pills{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:28px;}
+     .pill-row{display:flex;gap:8px;justify-content:center;}
+HTML: <div class="cher-pills">
+        <div class="pill-row"><span class="pill pill-c">C — Concept</span><span class="pill pill-h">H — Keywords</span></div>
+        <div class="pill-row"><span class="pill pill-e">E — Example</span><span class="pill pill-r">R — Recap</span></div>
+      </div>
+
+STEP 3 — QUESTION CARD STRUCTURE
+  C panel: ALWAYS shown BEFORE answering — never hidden
+  H/E/R panels: ONLY shown in feedback AFTER answering
+  Answer stored in QUESTIONS data object — NEVER hardcoded in onclick
+  Card rebuilt via wrap.innerHTML on every new question — NEVER patch reused DOM
+
+STEP 4 — FOOTER + SEAB YEAR
+  Combined: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · Topic N: [Name]"
+  Replace every "2025" with "2026"
+
+STEP 5 — CONTENT PRECISION (same as F1 above)
+
+FILE: F6 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'f7', group:'Weekly Files', label:'F7 — Flashcard Flipper', icon:'🔁', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com F7 Flashcard Flipper .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK (same as F6 above)
+
+STEP 2 — HERO CHER PILLS (2-row layout — same as F6 above)
+
+STEP 3 — CARD FRONT HEADER COLOURS BY TYPE
+  Definition (C): background:#1A7A8A; color:#fff
+  Explain Why (H): background:#7C6FAB; color:#fff  ← LAVENDER
+  Equation/Formula (E): background:#FFF0F5; border-bottom:2px solid #F48FB1; color:#C2185B  ← NEVER white text
+  Spot the Error (R): background:#FFFBEB; border-bottom:2px solid #FDE68A; color:#92400E  ← NEVER white text
+
+STEP 4 — CONTROLS LAYOUT
+  Primary controls (← Prev / ✅ Known / 🔄 Still Learning / Next →) must be ABOVE the card
+  ✗ NEVER place primary controls below the card — they get pushed off-screen on mobile
+
+STEP 5 — CARD FLIP JS
+  Remove .flipped class BEFORE updating card content — never show stale back face
+
+STEP 6 — FOOTER + SEAB YEAR (same as F6 above)
+
+STEP 7 — CONTENT PRECISION (same as F1 above)
+
+FILE: F7 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'f8', group:'Weekly Files', label:'F8 — Fill in the Blanks', icon:'✏️', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com F8 Fill in the Blanks .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK (same as F6 above)
+
+STEP 2 — HERO CHER PILLS (2-row layout — same as F6 above)
+
+STEP 3 — CONTROLS: STICKY BOTTOM TOOLBAR
+Controls must be in a STICKY TOOLBAR at the bottom — not floating at the top.
+IF controls are at the top of the page, restructure:
+  1. Remove controls div from inside #quiz
+  2. Add sticky toolbar BEFORE the .site-footer:
+     <div class="sticky-toolbar" id="stickyToolbar" style="display:none">
+       <div class="toolbar-row">
+         <button class="ctrl ctrl-check" onclick="checkAll()">✅ Check Answers</button>
+         <button class="ctrl ctrl-hint" onclick="hintAll()">💡 Hint</button>
+         <button class="ctrl ctrl-show" onclick="showAll()">👁 Show All</button>
+         <button class="ctrl ctrl-reset" onclick="resetAll()">↺ Reset</button>
+       </div>
+       <div class="toolbar-row toolbar-row-2">
+         <button class="ctrl ctrl-new" onclick="newSet()">🔀 New Set</button>
+       </div>
+     </div>
+  3. Add CSS:
+     .sticky-toolbar{position:sticky;bottom:0;z-index:90;background:var(--dark);padding:10px 16px;box-shadow:0 -2px 12px rgba(0,0,0,.25);}
+     .toolbar-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+     .toolbar-row-2{margin-top:6px;}
+  4. Show toolbar in startQuiz(): document.getElementById('stickyToolbar').style.display='block'
+  5. Set .page padding-bottom:140px
+
+STEP 4 — CONTROL BUTTON STYLES
+  .ctrl-check{background:var(--teal);color:#fff;border:none;}
+  .ctrl-hint{background:var(--cher-h);color:#fff;border:none;}
+  .ctrl-show{background:var(--orange);color:#fff;border:none;}
+  .ctrl-reset{background:var(--off);color:var(--dark);border:2px solid var(--border);}  ← KEEPS border
+  .ctrl-new{background:var(--dark);color:#fff;border:none;}
+
+STEP 5 — PASSAGE PANEL HEADER COLOURS
+  C: bg:var(--cher-c-lt) border-left:4px solid var(--cher-c)
+  H: bg:var(--cher-h-lt) border-left:4px solid var(--cher-h)  ← LAVENDER #7C6FAB
+  E: bg:var(--cher-e-bg) border-left:4px solid var(--cher-e-bd) color:var(--cher-e-text)  ← NEVER white
+  R: bg:var(--cher-r-bg) border-left:4px solid var(--cher-r-bd) color:var(--cher-r-text)  ← NEVER white
+
+STEP 6 — FOOTER + SEAB YEAR (same as F6 above)
+
+STEP 7 — CONTENT PRECISION (same as F1 above)
+
+FILE: F8 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'f9', group:'Weekly Files', label:'F9 — Drag & Drop', icon:'🎯', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com F9 Drag and Drop .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK (same as F6 above)
+
+STEP 2 — HERO CHER PILLS (2-row layout — same as F6 above)
+
+STEP 3 — ROUND TABS
+All states keep border:2px solid — colour changes per state:
+  .rtab         {border:2px solid var(--border); background:var(--white);   color:var(--mid);}
+  .rtab.active  {border-color:var(--teal);       background:var(--teal-lt); color:var(--teal-dk);}
+  .rtab.done-ok {border-color:var(--green);      background:var(--green-lt);color:var(--green);}
+  .rtab.done-mix{border-color:var(--gold);       background:var(--gold-lt); color:var(--gold);}
+
+STEP 4 — ROUND CARD HEADER COLOURS
+  C: bg:var(--cher-c-lt) border-left:4px solid var(--teal) color:var(--cher-c-dk)
+  H: bg:var(--cher-h-lt) border-left:4px solid var(--cher-h) color:var(--cher-h-dk)  ← LAVENDER #7C6FAB
+  E: bg:var(--cher-e-bg) border-left:4px solid var(--cher-e-bd) color:var(--cher-e-text)  ← NEVER white
+  R: bg:var(--cher-r-bg) border-left:4px solid var(--cher-r-bd) color:var(--cher-r-text)  ← NEVER white
+
+STEP 5 — ROUND CONTROL BUTTONS
+  .btn-teal (Check Round / Next / Play Again): background:var(--teal); color:#fff; border:none
+  .btn-off  (Try Again): background:var(--off); color:var(--dark); border:2px solid var(--border)  ← KEEPS border
+
+STEP 6 — TAP-TO-SELECT (primary mobile interaction)
+  Tapping a term chip selects it → tapping a drop zone places it
+  Must work without drag-and-drop on mobile
+
+STEP 7 — FOOTER + SEAB YEAR (same as F6 above)
+
+STEP 8 — CONTENT PRECISION (same as F1 above)
+
+FILE: F9 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'cc0', group:'Crash Course Files', label:'CC0 — Condensed Notes', icon:'📄', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com CC0 Condensed Notes .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK (same as F6/F8 above)
+
+STEP 2 — CHER PANEL COLOURS
+  H: border var(--cher-h) #7C6FAB, bg var(--cher-h-lt)  ← LAVENDER
+  E: border var(--cher-e-bd) #F48FB1, bg var(--cher-e-bg), text var(--cher-e-text) #C2185B  ← NEVER white
+  R: border var(--cher-r-bd) #FDE68A, bg var(--cher-r-bg), text var(--cher-r-text) #92400E  ← NEVER white
+
+STEP 3 — FOOTER + SEAB YEAR
+  Combined: "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026"
+  Topic name in white-space:nowrap span — never split
+  Replace every "2025" with "2026"
+
+STEP 4 — CONTENT PRECISION (same as F1 above)
+
+FILE: CC0 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'cc1', group:'Crash Course Files', label:'CC1 — Exam Cheat Sheet', icon:'📋', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com CC1 Exam Cheat Sheet .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK (same as F6/F8 above)
+
+STEP 2 — TABLE COLOURS
+  Must-Write column header: bg var(--green-lt) color var(--green)
+  Never-Say column header: bg var(--red-lt) color var(--red)
+  Formula column header: bg var(--teal-lt) color var(--teal-dk)
+  CHER tags in rows: H=#7C6FAB lavender, E=#F48FB1 pink bg, R=#FDE68A champagne bg
+
+STEP 3 — FOOTER + SEAB YEAR (same as CC0 above)
+
+STEP 4 — CONTENT PRECISION (same as F1 above)
+
+FILE: CC1 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'cc2', group:'Crash Course Files', label:'CC2 — Answer Technique', icon:'🎯', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com CC2 Answer Technique Guide .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK (same as F6/F8 above)
+
+STEP 2 — CHER PANEL COLOURS (same as CC0 above)
+
+STEP 3 — STICKY BOTTOM CONTROLS
+  Action buttons must be sticky at bottom — not floating at top of page
+  CSS: position:sticky; bottom:0; background:var(--dark); padding:10px 16px;
+  Button styles: primary=teal border:none · secondary=off-white border:2px solid var(--border)
+
+STEP 4 — FOOTER + SEAB YEAR (same as CC0 above)
+
+STEP 5 — CONTENT PRECISION (same as F1 above)
+
+FILE: CC2 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'cc3', group:'Crash Course Files', label:'CC3 — Mistakes Drill', icon:'⚠️', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com CC3 Mistakes Drill .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK (same as F6/F8 above)
+
+STEP 2 — HERO CHER PILLS (2-row layout — same as F6 above)
+
+STEP 3 — STICKY BOTTOM CONTROLS (same as CC2 above)
+
+STEP 4 — CHER PANEL COLOURS (same as CC0 above)
+
+STEP 5 — FOOTER + SEAB YEAR (same as CC0 above)
+
+STEP 6 — CONTENT PRECISION (same as F1 above)
+
+FILE: CC3 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'cc4', group:'Crash Course Files', label:'CC4 — Rapid Fire', icon:'⚡', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com CC4 Rapid Fire .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK (same as F6/F8 above)
+
+STEP 2 — HERO CHER PILLS (2-row layout — same as F6 above)
+
+STEP 3 — STICKY BOTTOM CONTROLS (same as CC2 above)
+
+STEP 4 — TIMER
+  Countdown timer visible per question — must not be hidden behind sticky toolbar
+  Page padding-bottom:140px minimum
+
+STEP 5 — CHER PANEL COLOURS (same as CC0 above)
+
+STEP 6 — FOOTER + SEAB YEAR (same as CC0 above)
+
+STEP 7 — CONTENT PRECISION (same as F1 above)
+
+FILE: CC4 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'cc5', group:'Crash Course Files', label:'CC5 — Daily Quiz', icon:'🧪', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com CC5 Daily Quiz .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK (same as F6/F8 above)
+
+STEP 2 — HERO CHER PILLS (2-row layout — same as F6 above)
+
+STEP 3 — QUESTION CARD STRUCTURE (same as F6 above)
+  C panel shown BEFORE answering · H/E/R panels in feedback AFTER answering
+
+STEP 4 — STICKY BOTTOM CONTROLS (same as CC2 above)
+
+STEP 5 — CHER PANEL COLOURS (same as CC0 above)
+
+STEP 6 — FOOTER + SEAB YEAR (same as CC0 above)
+
+STEP 7 — CONTENT PRECISION (same as F1 above)
+
+FILE: CC5 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'f0', group:'Crash Course Files', label:'F0 — Free Preview', icon:'🆓', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com F0 Free Crash Course Preview .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK (same as F6/F8 above)
+
+STEP 2 — HERO CHER PILLS (2-row layout)
+  C pill: solid teal, white text, active
+  H/E/R pills: GREYED OUT with background:#CBD5E0; color:#718096 — NEVER opacity:0.4 on coloured version
+
+STEP 3 — LOCKED PANEL CARDS (H/E/R)
+  Must show padlock icon + CTA button — content hidden
+  ✗ Never show H/E/R content freely in F0
+
+STEP 4 — MCQ SECTION (5 questions)
+  Correct/incorrect feedback only — NO CHER panels in MCQ feedback
+
+STEP 5 — FOOTER + SEAB YEAR (same as CC0 above)
+
+STEP 6 — CONTENT PRECISION (same as F1 above)
+
+FILE: F0 · TOPIC: [paste topic here]`
+  },
+  {
+    id:'diag', group:'Assessments', label:'Diagnostic Tests (S3 & S4)', icon:'📊', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com Diagnostic Test .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK (same as F6/F8 above)
+
+STEP 2 — SEAB YEAR: replace every "2025" with "2026"
+
+STEP 3 — TRAFFIC-LIGHT RESULTS COLOURS
+  Green (strong): background:var(--green-lt); border:1px solid var(--green-bd); color:var(--green)
+  Amber (partial): background:var(--amber-lt); border:1px solid var(--amber-bd); color:var(--amber)
+  Red (weak): background:var(--red-lt); border:1px solid var(--red-bd); color:var(--red)
+
+STEP 4 — FORMSPREE GATE
+  Gated CHER weakness report must only appear after successful Formspree form submission
+  PDPA consent checkbox must be required (not optional)
+
+STEP 5 — FOOTER
+  "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · S3/S4 Diagnostic Test"
+
+STEP 6 — CONTENT PRECISION (same as F1 above)
+
+FILE: Diagnostic · [S3 or S4]`
+  },
+  {
+    id:'exam', group:'Assessments', label:'CC6 End-of-Intensive Exams', icon:'📝', ext:'HTML',
+    prompt:`You are patching an existing learnfromcher.com CC6 End-of-Intensive Exam .html file. Fix format only.
+
+STEP 1 — REPLACE :root BLOCK (same as F6/F8 above)
+
+STEP 2 — SEAB YEAR: replace every "2025" with "2026"
+
+STEP 3 — QUESTION CARD STRUCTURE (same as F6/CC5 above)
+  C panel shown BEFORE answering · H/E/R panels in feedback AFTER answering
+  Answer stored in data object — NEVER hardcoded in onclick
+
+STEP 4 — TRAFFIC-LIGHT RESULTS + FORMSPREE GATE (same as Diagnostic above)
+
+STEP 5 — FOOTER
+  "learnfromcher.com · O-Level Science (Chemistry) · SEAB 2026 · S3/S4 Final Exam"
+  Topic name in white-space:nowrap — never split
+
+STEP 6 — CONTENT PRECISION (same as F1 above)
+
+FILE: CC6 Exam · [S3 or S4]`
+  }
+];
+
+function renderPatchTab() {
+  const groups = [...new Set(PATCH_DATA.map(p => p.group))];
+  const extColors = { DOCX:'#2B7BD9', PPTX:'#D24726', HTML:'#276749' };
+
+  let html = `<div style="padding:4px 0 20px;">
+    <div style="background:var(--dark);border-radius:12px;padding:18px 22px;margin-bottom:20px;">
+      <h2 style="color:#FDE68A;font-size:16px;font-weight:800;margin-bottom:6px;">🩹 Patch Prompts</h2>
+      <p style="color:#90CDF4;font-size:12px;font-family:'DM Mono',monospace;">One file per chat · Attach the file · Paste the prompt · Add FILE: [type] · TOPIC: [name] at the bottom</p>
+    </div>`;
+
+  for (const group of groups) {
+    const items = PATCH_DATA.filter(p => p.group === group);
+    html += `<div style="background:var(--white);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:16px;">
+      <div style="background:var(--dark);padding:10px 16px;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:13px;font-weight:800;color:#FDE68A;">${group}</span>
+      </div>`;
+    for (const item of items) {
+      const extColor = extColors[item.ext] || '#718096';
+      html += `<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);">
+        <span style="font-size:18px;flex-shrink:0;">${item.icon}</span>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:var(--dark);">${item.label}</div>
+          <div style="font-size:10px;font-weight:700;color:${extColor};font-family:'DM Mono',monospace;">${item.ext}</div>
+        </div>
+        <button onclick="openPatchModal('${item.id}')" style="background:var(--teal);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">📋 Get Prompt</button>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  document.getElementById('patchPanelContent').innerHTML = html;
+}
+
+function openPatchModal(id) {
+  const item = PATCH_DATA.find(p => p.id === id);
+  if (!item) return;
+  document.getElementById('modalTitle').textContent = `Patch Prompt — ${item.label}`;
+  document.getElementById('modalSub').textContent = `${item.ext} file · Attach file + paste prompt + add FILE/TOPIC line at bottom`;
+  document.getElementById('modalTabs').innerHTML = `<button class="modal-tab active">📋 Patch Prompt</button>`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="prompt-label">Paste this prompt with the file attached</div>
+    <div class="prompt-area">
+      <div class="prompt-box" id="promptText">${escHtml(item.prompt)}</div>
+    </div>
+    <div class="info-panel info-c" style="margin-top:12px;">
+      <div class="lbl">💡 HOW TO USE</div>
+      <p>1. Open a <strong>fresh chat</strong>. 2. Attach the HTML/DOCX/PPTX file. 3. Copy and paste this prompt. 4. Add at the bottom: <strong>FILE: ${item.ext} · TOPIC: T[N] [Topic Name]</strong></p>
+    </div>`;
+  document.getElementById('statusBtns').innerHTML = '';
+  document.getElementById('copyBtn').style.display = 'flex';
+  document.getElementById('modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
 </script>
 </body>
 </html>
