@@ -1,0 +1,2091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>learnfromcher.com — Pure Chemistry Dashboard v4</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --teal:#1A7A8A; --teal-dk:#0F5A67; --teal-md:#2A9BAD; --teal-lt:#EBF6F8;
+  --dark:#1A1535; --dark-2:#2D1B4E; --mid:#4A5568; --light:#718096;
+  --off:#F7FAFC; --white:#fff; --border:#CBD5E0;
+  --pure-accent:#7C6FAB; --pure-dk:#4A0080; --pure-bg:#FAF5FF;
+  --cher-c:#1A7A8A; --cher-c-lt:#EBF6F8; --cher-c-dk:#0F5A67;
+  --cher-h:#7C6FAB; --cher-h-lt:#FAF5FF; --cher-h-dk:#4A0080;
+  --cher-e:#F48FB1; --cher-e-lt:#FFF0F5; --cher-e-dk:#C2185B;
+  --cher-r:#FDE68A; --cher-r-lt:#FFFBEB; --cher-r-dk:#92400E;
+  --green:#276749; --green-lt:#F0FFF4; --green-bd:#C6F6D5;
+  --amber:#B45309; --amber-lt:#FFFBEB; --amber-bd:#FDE68A;
+  --red:#C53030; --red-lt:#FFF5F5;
+  --coral:#E8604C; --gold:#B7791F; --gold-lt:#FFFFF0;
+  --cc-accent:#C05621; --cc-accent-lt:#FFF7ED; --cc-accent-bd:#FDBA74;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#F0EFF8;color:var(--dark);min-height:100vh;}
+
+/* ── HEADER ── */
+.hdr{background:var(--dark);padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(26,21,53,.5);}
+.hdr-logo{font-size:19px;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:0;}
+.hdr-logo .lp{color:var(--teal);}
+.hdr-logo .lc{color:var(--coral);font-size:20px;}
+.hdr-right{display:flex;align-items:center;gap:12px;}
+.hdr-badge{background:rgba(124,111,171,.25);border:1px solid rgba(124,111,171,.5);color:#D6BCFA;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.4px;}
+.hdr-guide-btn{background:rgba(253,230,138,.12);border:1px solid rgba(253,230,138,.35);color:#FDE68A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.hdr-guide-btn:hover{background:rgba(253,230,138,.22);}
+.progress-summary{font-size:12px;color:#C4B5FD;font-family:'DM Mono',monospace;}
+
+/* ── LEGEND ── */
+.legend-bar{background:rgba(26,21,53,.85);border-top:1px solid rgba(124,111,171,.2);padding:7px 28px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#C4B5FD;}
+.leg-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0;}
+.leg-not{background:#2A2048;border:1px solid #3D3162;}
+.leg-prog{background:var(--amber-lt);border:1px solid var(--amber-bd);}
+.leg-done{background:var(--green-lt);border:1px solid var(--green-bd);}
+.leg-gold{background:linear-gradient(135deg,#FDE68A,#F6D860);border:1px solid #F6D860;}
+.legend-sep{width:1px;height:14px;background:rgba(196,181,253,.2);}
+
+/* ── MAIN ── */
+.main{padding:22px 20px 60px;max-width:1600px;margin:0 auto;}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.filter-bar label{font-size:13px;font-weight:600;color:var(--mid);}
+.filter-btn{background:var(--white);border:1.5px solid var(--border);border-radius:6px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--mid);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.filter-btn:hover,.filter-btn.active{background:var(--pure-accent);border-color:var(--pure-accent);color:#fff;}
+.filter-sep{width:1px;height:20px;background:var(--border);}
+.stats-chips{display:flex;gap:8px;margin-left:auto;}
+.stat-chip{font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;font-family:'DM Mono',monospace;}
+.sc-done{background:var(--green-lt);border:1px solid var(--green-bd);color:var(--green);}
+.sc-prog{background:var(--amber-lt);border:1px solid var(--amber-bd);color:var(--amber);}
+.sc-not{background:var(--off);border:1px solid var(--border);color:var(--light);}
+
+/* ── GRID ── */
+.grid-wrap{overflow-x:auto;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.1);}
+.grid-table{border-collapse:separate;border-spacing:0;min-width:1100px;width:100%;background:var(--white);}
+
+/* ── COL HEADERS ── */
+.col-hdr{background:var(--dark);color:#fff;font-size:10px;font-weight:700;padding:9px 5px;text-align:center;letter-spacing:.3px;white-space:nowrap;border-bottom:2px solid var(--pure-accent);position:sticky;top:52px;z-index:100;}
+.col-hdr:first-child{text-align:left;padding-left:12px;min-width:195px;border-radius:10px 0 0 0;}
+.col-hdr:last-child{border-radius:0 10px 0 0;}
+.col-hdr .file-num{font-size:14px;display:block;margin-bottom:1px;}
+.col-hdr .file-type{font-size:9px;color:#C4B5FD;display:block;font-family:'DM Mono',monospace;}
+.col-hdr.f-docx .file-num{color:#90CDF4;}
+.col-hdr.f-pptx .file-num{color:#FBD38D;}
+.col-hdr.f-html .file-num{color:#9AE6B4;}
+.col-hdr.f-app .file-num{color:#FCA5A5;}
+.col-hdr.f-cc .file-num{color:#FDBA74;}
+.col-hdr.f-free .file-num{color:#FDE68A;}
+
+/* ── TOPIC HEADER CELL ── */
+.topic-hdr{background:var(--white);border-bottom:1px solid var(--border);border-right:2px solid #EDE9F8;padding:9px 12px;font-size:12px;font-weight:700;color:var(--dark);vertical-align:middle;min-width:195px;position:relative;}
+.topic-hdr:hover{background:#FAF8FF;}
+.topic-num{display:inline-flex;align-items:center;justify-content:center;background:var(--pure-accent);color:#fff;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:800;margin-right:7px;flex-shrink:0;vertical-align:middle;}
+.topic-gold .topic-num{background:linear-gradient(135deg,#F6D860,#ECC000);color:#5C4000;}
+.topic-gold{background:linear-gradient(90deg,#FFFBEB,#fff) !important;}
+.gold-star{font-size:12px;margin-left:3px;}
+.topic-meta{display:flex;align-items:center;gap:6px;margin-top:4px;padding-left:29px;}
+.topic-progress-text{font-size:10px;color:var(--light);font-family:'DM Mono',monospace;}
+.progress-ring-wrap{display:inline-flex;align-items:center;}
+.pure-only-badge{background:var(--pure-accent);color:#fff;font-size:8px;font-weight:800;padding:2px 6px;border-radius:10px;letter-spacing:.3px;vertical-align:middle;}
+.pure-mini{color:var(--pure-accent);font-size:11px;vertical-align:middle;margin-left:2px;}
+
+/* ── CELL ── */
+td.cell{padding:3px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);vertical-align:middle;}
+td.cell:last-child{border-right:none;}
+tr:last-child td{border-bottom:none;}
+.cell-btn{width:100%;min-width:75px;border:none;border-radius:7px;padding:6px 4px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:48px;justify-content:center;position:relative;}
+.cell-btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.12);}
+.status-not .cell-btn{background:#2A2048;color:#C4B5FD;border:1.5px solid #3D3162;}
+.status-not .cell-btn:hover{background:#332758;border-color:var(--pure-accent);}
+.status-prog .cell-btn{background:var(--amber-lt);color:var(--amber);border:1.5px solid var(--amber-bd);}
+.status-prog .cell-btn:hover{background:#FEF3C7;}
+.status-done .cell-btn{background:var(--green-lt);color:var(--green);border:1.5px solid var(--green-bd);}
+.status-done .cell-btn:hover{background:#DCFCE7;}
+.status-gold .cell-btn{background:linear-gradient(135deg,#FEF9C3,#FFF8DC);color:#92400E;border:1.5px solid #F6D860;box-shadow:0 0 0 1px rgba(246,216,96,.3);}
+.status-gold .cell-btn:hover{background:linear-gradient(135deg,#FEF08A,#FEF9C3);}
+.cell-icon{font-size:15px;line-height:1;}
+.cell-label{font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;opacity:.9;}
+.cell-status{font-size:8px;opacity:.6;font-family:'DM Mono',monospace;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,5,30,.72);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px);}
+.modal{background:var(--white);border-radius:16px;width:100%;max-width:880px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.45);}
+.modal-hdr{background:linear-gradient(135deg,var(--dark) 0%,var(--dark-2) 100%);border-radius:16px 16px 0 0;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-title{color:#fff;font-size:15px;font-weight:800;}
+.modal-sub{color:#C4B5FD;font-size:11px;font-family:'DM Mono',monospace;margin-top:3px;}
+.modal-close{background:rgba(255,255,255,.1);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+.modal-close:hover{background:rgba(255,255,255,.2);}
+.modal-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);flex-shrink:0;overflow-x:auto;}
+.modal-tab{padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--light);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
+.modal-tab:hover{color:var(--dark);}
+.modal-tab.active{color:var(--pure-accent);border-bottom-color:var(--pure-accent);}
+.modal-body{padding:18px 22px;overflow-y:auto;flex:1;}
+.modal-footer{padding:13px 22px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:10px;flex-wrap:wrap;}
+.modal-footer-left{display:flex;align-items:center;gap:8px;}
+.status-btn{padding:6px 13px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;transition:all .15s;}
+.sb-not{background:var(--off);border:1.5px solid var(--border);color:var(--mid);}
+.sb-not:hover,.sb-not.active{background:#2A2048;border-color:#3D3162;color:#C4B5FD;}
+.sb-prog{background:var(--amber-lt);border:1.5px solid var(--amber-bd);color:var(--amber);}
+.sb-prog:hover,.sb-prog.active{background:#FEF3C7;box-shadow:0 0 0 2px var(--amber-bd);}
+.sb-done{background:var(--green-lt);border:1.5px solid var(--green-bd);color:var(--green);}
+.sb-done:hover,.sb-done.active{background:#DCFCE7;box-shadow:0 0 0 2px var(--green-bd);}
+.prompt-area{position:relative;}
+.prompt-label{font-size:11px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+.prompt-box{background:#1A1535;border:1px solid #2D1B4E;border-radius:10px;padding:14px 16px;font-family:'DM Mono',monospace;font-size:11px;color:#C4B5FD;line-height:1.7;white-space:pre-wrap;word-break:break-word;max-height:340px;overflow-y:auto;user-select:all;}
+.copy-btn{background:var(--pure-accent);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.copy-btn:hover{background:var(--pure-dk);}
+.copy-btn.copied{background:var(--green);}
+.info-panel{border-radius:8px;padding:11px 13px;margin:8px 0;border-left:4px solid;}
+.info-c{background:var(--cher-c-lt);border-color:var(--cher-c);}
+.info-h{background:var(--cher-h-lt);border-color:var(--cher-h);}
+.info-e{background:var(--cher-e-lt);border-color:var(--cher-e-dk);}
+.info-r{background:var(--cher-r-lt);border-color:var(--cher-r-dk);}
+.info-panel .lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.info-c .lbl{color:var(--cher-c-dk);}
+.info-h .lbl{color:var(--cher-h-dk);}
+.info-e .lbl{color:var(--cher-e-dk);}
+.info-r .lbl{color:var(--cher-r-dk);}
+.info-panel p,.info-panel li{font-size:12px;color:var(--dark);line-height:1.55;}
+.info-panel ul{padding-left:16px;}
+.info-panel li{margin:2px 0;}
+.section-hdr{font-size:13px;font-weight:800;color:var(--dark);margin:14px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.toast{position:fixed;bottom:26px;right:26px;background:var(--dark);color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;transform:translateY(20px);opacity:0;transition:all .25s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.3);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast .t-icon{color:#C4B5FD;margin-right:6px;}
+
+/* ── TAB TOGGLE ── */
+.tab-toggle{display:flex;gap:6px;margin-bottom:16px;background:var(--dark);border-radius:10px;padding:5px;width:fit-content;}
+.tab-toggle-btn{background:transparent;border:none;border-radius:7px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;color:#C4B5FD;transition:all .15s;}
+.tab-toggle-btn:hover{background:rgba(124,111,171,.2);}
+.tab-toggle-btn.active{background:var(--pure-accent);color:#fff;}
+.tab-toggle-btn.cc-active{background:var(--cc-accent);color:#fff;}
+
+/* ── BATCH GENERATOR ── */
+.batch-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.batch-toggle-btn{background:rgba(124,111,171,.15);border:1.5px solid rgba(124,111,171,.4);color:#C4B5FD;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.batch-toggle-btn:hover{background:rgba(124,111,171,.28);}
+.batch-toggle-btn.open{background:var(--pure-accent);border-color:var(--pure-accent);color:#fff;}
+.batch-panel{background:var(--white);border:1.5px solid var(--pure-accent);border-radius:12px;padding:18px 20px;margin-bottom:18px;display:none;}
+.batch-panel.open{display:block;}
+.batch-panel-title{font-size:13px;font-weight:800;color:var(--dark);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.batch-panel-title span{background:var(--pure-accent);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.batch-modes{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.batch-mode-btn{padding:6px 14px;border:1.5px solid var(--border);background:var(--off);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:var(--mid);transition:all .15s;}
+.batch-mode-btn:hover{border-color:var(--pure-accent);color:var(--pure-accent);}
+.batch-mode-btn.active{background:var(--pure-bg);border-color:var(--pure-accent);color:var(--pure-accent);}
+.batch-mode-panel{display:none;}
+.batch-mode-panel.active{display:block;}
+.batch-controls{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px;}
+.batch-ctrl-group{display:flex;flex-direction:column;gap:4px;}
+.batch-ctrl-group label{font-size:11px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:.5px;}
+.batch-select{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--dark);background:var(--off);border:1.5px solid var(--border);border-radius:8px;padding:7px 12px;cursor:pointer;min-width:155px;}
+.batch-select:focus{outline:none;border-color:var(--pure-accent);}
+.batch-generate-btn{background:var(--pure-accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.batch-generate-btn:hover{background:var(--pure-dk);}
+.batch-note{font-size:11px;color:var(--light);margin-bottom:12px;font-style:italic;line-height:1.5;}
+.batch-warn{background:var(--red-lt);border:1px solid #FED7D7;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:12px;display:none;}
+.batch-warn.show{display:block;}
+.batch-results{display:flex;flex-direction:column;gap:10px;}
+.batch-item{background:var(--off);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.batch-item-hdr{background:var(--dark);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;}
+.batch-item-hdr .bi-label{font-size:12px;font-weight:700;color:#C4B5FD;font-family:'DM Mono',monospace;}
+.batch-item-hdr .bi-unit{font-size:11px;color:var(--pure-bg);}
+.batch-copy-btn{background:var(--pure-accent);color:#fff;border:none;border-radius:6px;padding:4px 11px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;}
+.batch-copy-btn:hover{background:var(--pure-dk);}
+.batch-copy-btn.copied{background:var(--green);}
+.batch-prompt-preview{padding:10px 14px;font-family:'DM Mono',monospace;font-size:10px;color:#C4B5FD;background:#1A1535;line-height:1.6;max-height:100px;overflow:hidden;position:relative;}
+.batch-prompt-preview::after{content:'';position:absolute;bottom:0;left:0;right:0;height:28px;background:linear-gradient(transparent,#1A1535);}
+.batch-footer{display:flex;gap:8px;align-items:center;padding:9px 14px;border-top:1px solid var(--border);background:var(--white);}
+
+/* ── ASSESSMENTS ── */
+.assess-section{margin-top:22px;background:var(--white);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.assess-hdr{background:linear-gradient(135deg,var(--dark) 0%,var(--dark-2) 100%);padding:12px 18px;display:flex;align-items:center;gap:10px;}
+.assess-hdr h3{color:#FDE68A;font-size:13px;font-weight:800;}
+.assess-hdr span{color:#C4B5FD;font-size:11px;font-family:'DM Mono',monospace;}
+.assess-row{display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.assess-row:last-child{border-bottom:none;}
+.assess-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.assess-dot.not{background:#CBD5E0;}
+.assess-dot.prog{background:var(--amber);}
+.assess-dot.done{background:var(--green);}
+.assess-label{flex:1;font-size:13px;font-weight:600;color:var(--dark);min-width:200px;}
+.assess-prompt-btn{background:var(--pure-bg);border:1px solid var(--pure-accent);color:var(--pure-accent);font-size:11px;font-weight:700;padding:4px 11px;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;}
+.assess-prompt-btn:hover{background:var(--pure-accent);color:#fff;}
+.assess-status-btns{display:flex;gap:4px;}
+.assess-sb{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;border:none;}
+.assess-sb-not{background:var(--off);border:1px solid var(--border);color:var(--light);}
+.assess-sb-not.active{background:#2A2048;color:#C4B5FD;}
+.assess-sb-prog{background:var(--amber-lt);border:1px solid var(--amber-bd);color:var(--amber);}
+.assess-sb-prog.active{box-shadow:0 0 0 2px var(--amber-bd);}
+.assess-sb-done{background:var(--green-lt);border:1px solid var(--green-bd);color:var(--green);}
+.assess-sb-done.active{box-shadow:0 0 0 2px var(--green-bd);}
+
+/* ── CC HEADER ── */
+.col-hdr.f-cc .file-num{color:#FDBA74;}
+.col-hdr.f-free .file-num{color:#FDE68A;} 
+.col-hdr.f-cc6{border-left:2px solid var(--cc-accent-bd);}
+.col-hdr.f-cc6 .file-num{color:#FCA5A5;}
+
+/* ── LOGO MODAL ── */
+.logo-modal-overlay{position:fixed;inset:0;background:rgba(10,5,30,.78);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px);}
+.logo-modal{background:var(--white);border-radius:16px;width:100%;max-width:780px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.logo-modal-hdr{background:linear-gradient(135deg,var(--dark) 0%,var(--dark-2) 100%);border-radius:16px 16px 0 0;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.logo-modal-hdr h2{color:#FDE68A;font-size:15px;font-weight:800;}
+.logo-modal-body{padding:20px 22px;overflow-y:auto;flex:1;}
+.logo-modal-footer{padding:13px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;flex-shrink:0;}
+.close-logo-btn{background:var(--pure-accent);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.close-logo-btn:hover{background:var(--pure-dk);}
+.step-block{display:flex;gap:12px;margin:10px 0;align-items:flex-start;}
+.step-num{background:var(--pure-accent);color:#fff;width:26px;height:26px;border-radius:50%;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.step-content{flex:1;}
+.step-content strong{font-size:13px;color:var(--dark);display:block;margin-bottom:3px;}
+.step-content p{font-size:12px;color:var(--mid);line-height:1.5;}
+.code-block{background:#1A1535;border-radius:8px;padding:11px 14px;margin:7px 0;font-family:'DM Mono',monospace;font-size:11px;color:#C4B5FD;line-height:1.7;white-space:pre-wrap;word-break:break-word;position:relative;}
+.copy-code-btn{position:absolute;top:7px;right:8px;background:rgba(124,111,171,.3);border:1px solid rgba(124,111,171,.5);color:#C4B5FD;border-radius:5px;padding:2px 8px;font-size:10px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.warn-box{background:var(--red-lt);border:1px solid #FED7D7;border-radius:8px;padding:10px 14px;margin:8px 0;font-size:12px;color:var(--red);}
+.note-box{background:var(--amber-lt);border:1px solid var(--amber-bd);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:12px;color:var(--amber);}
+
+@media(max-width:768px){
+  .hdr{padding:0 14px;}
+  .main{padding:12px 10px 40px;}
+  .col-hdr:first-child{min-width:150px;}
+  .modal{max-height:95vh;border-radius:12px;}
+  .batch-controls{flex-direction:column;}
+  .batch-select{min-width:100%;}
+  .assess-row{gap:8px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-logo">
+    <span class="lp">learnfrom</span><span class="lc">Cher</span><span class="lp">.com</span>
+  </div>
+  <div class="hdr-right">
+    <span class="progress-summary" id="progressSummary">Loading…</span>
+    <button class="hdr-guide-btn" onclick="openLogoGuide()">🖼 Logo Guide</button>
+    <span class="hdr-badge">⚗ PURE CHEMISTRY · v4</span>
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend-bar">
+  <div class="legend-item"><div class="leg-dot leg-not"></div>Not Started</div>
+  <div class="legend-sep"></div>
+  <div class="legend-item"><div class="leg-dot leg-prog"></div>In Progress</div>
+  <div class="legend-sep"></div>
+  <div class="legend-item"><div class="leg-dot leg-done"></div>Done</div>
+  <div class="legend-sep"></div>
+  <div class="legend-item"><div class="leg-dot leg-gold"></div>Gold Standard (U3 · Atomic Structure)</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TAB TOGGLE -->
+  <div class="tab-toggle" id="mainTabToggle">
+    <button class="tab-toggle-btn active" id="tabWeekly" onclick="switchMainTab('weekly')">📚 Weekly Tuition</button>
+    <button class="tab-toggle-btn" id="tabCC" onclick="switchMainTab('cc')">⚡ Crash Course</button>
+  </div>
+
+  <!-- BATCH GENERATOR -->
+  <div class="batch-bar">
+    <button class="batch-toggle-btn" id="batchToggleBtn" onclick="toggleBatchPanel()">⚡ Batch Prompt Generator</button>
+    <span style="font-size:11px;color:var(--light);">Generate prompts enforcing the 3-file session rule — one chat per file</span>
+  </div>
+  <div class="batch-panel" id="batchPanel">
+    <div class="batch-panel-title">Batch Prompt Generator <span>3-FILE RULE</span></div>
+    <!-- MODE SELECTOR -->
+    <div class="batch-modes">
+      <button class="batch-mode-btn active" onclick="setBatchMode('A')" id="modeA">A — Same type, ≤3 units</button>
+      <button class="batch-mode-btn" onclick="setBatchMode('B')" id="modeB">B — Interactive trio (F7+F8+F9)</button>
+      <button class="batch-mode-btn" onclick="setBatchMode('C')" id="modeC">C — CC trio (CC0+CC1+CC2)</button>
+      <button class="batch-mode-btn" onclick="setBatchMode('D')" id="modeD">D — App Bank (F10, ≤3 units)</button>
+    </div>
+
+    <!-- MODE A -->
+    <div class="batch-mode-panel active" id="panelA">
+      <div class="batch-note">Select a file type and up to 3 units. Each file = one chat session. Never mix file types across different units.</div>
+      <div class="batch-controls">
+        <div class="batch-ctrl-group">
+          <label>File Type</label>
+          <select class="batch-select" id="batchFileSelectA"></select>
+        </div>
+        <div class="batch-ctrl-group">
+          <label>Unit 1</label>
+          <select class="batch-select" id="batchUnitA1"></select>
+        </div>
+        <div class="batch-ctrl-group">
+          <label>Unit 2 (optional)</label>
+          <select class="batch-select" id="batchUnitA2"></select>
+        </div>
+        <div class="batch-ctrl-group">
+          <label>Unit 3 (optional)</label>
+          <select class="batch-select" id="batchUnitA3"></select>
+        </div>
+        <button class="batch-generate-btn" onclick="generateBatchA()">Generate Prompts →</button>
+      </div>
+    </div>
+
+    <!-- MODE B -->
+    <div class="batch-mode-panel" id="panelB">
+      <div class="batch-note">Interactive trio: F7 Flashcard Flipper + F8 Fill-in-Blanks + F9 Drag &amp; Drop for a single unit. 3 HTML files, same unit context.</div>
+      <div class="batch-controls">
+        <div class="batch-ctrl-group">
+          <label>Unit</label>
+          <select class="batch-select" id="batchUnitB"></select>
+        </div>
+        <button class="batch-generate-btn" onclick="generateBatchB()">Generate F7+F8+F9 →</button>
+      </div>
+    </div>
+
+    <!-- MODE C -->
+    <div class="batch-mode-panel" id="panelC">
+      <div class="batch-note">CC trio: CC0 Condensed Notes + CC1 Cheat Sheet + CC2 Answer Technique for a single unit. 3 HTML files.</div>
+      <div class="batch-controls">
+        <div class="batch-ctrl-group">
+          <label>Unit</label>
+          <select class="batch-select" id="batchUnitC"></select>
+        </div>
+        <button class="batch-generate-btn" onclick="generateBatchC()">Generate CC0+CC1+CC2 →</button>
+      </div>
+    </div>
+
+    <!-- MODE D -->
+    <div class="batch-mode-panel" id="panelD">
+      <div class="batch-note">Application Bank (F10) — same HTML format across up to 3 units. 15+ questions per unit across Foundation / Intermediate / Stretch tiers.</div>
+      <div class="batch-controls">
+        <div class="batch-ctrl-group">
+          <label>Unit 1</label>
+          <select class="batch-select" id="batchUnitD1"></select>
+        </div>
+        <div class="batch-ctrl-group">
+          <label>Unit 2 (optional)</label>
+          <select class="batch-select" id="batchUnitD2"></select>
+        </div>
+        <div class="batch-ctrl-group">
+          <label>Unit 3 (optional)</label>
+          <select class="batch-select" id="batchUnitD3"></select>
+        </div>
+        <button class="batch-generate-btn" onclick="generateBatchD()">Generate F10 Prompts →</button>
+      </div>
+    </div>
+
+    <div class="batch-warn" id="batchWarn"></div>
+    <div class="batch-results" id="batchResults"></div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar" id="filterBarWrap">
+    <label>Show:</label>
+    <button class="filter-btn active" onclick="setFilter('all',event)">All Topics</button>
+    <button class="filter-btn" onclick="setFilter('not',event)">Not Started</button>
+    <button class="filter-btn" onclick="setFilter('prog',event)">In Progress</button>
+    <button class="filter-btn" onclick="setFilter('done',event)">Done</button>
+    <div class="filter-sep"></div>
+    <button class="filter-btn" style="color:var(--red);border-color:var(--red);" onclick="confirmReset()">↺ Reset All</button>
+    <div class="stats-chips">
+      <div class="stat-chip sc-done" id="statDone">— done</div>
+      <div class="stat-chip sc-prog" id="statProg">— in progress</div>
+      <div class="stat-chip sc-not" id="statNot">— not started</div>
+    </div>
+  </div>
+
+  <!-- WEEKLY TUITION GRID -->
+  <div id="weeklyTabContent">
+    <div class="grid-wrap">
+      <table class="grid-table" id="mainGrid">
+        <thead><tr id="colHeaders"></tr></thead>
+        <tbody id="gridBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CRASH COURSE TAB -->
+  <div id="ccTabContent" style="display:none;">
+    <div class="grid-wrap">
+      <table class="grid-table" id="ccGrid">
+        <thead><tr id="ccColHeaders"></tr></thead>
+        <tbody id="ccGridBody"></tbody>
+      </table>
+    </div>
+    <div class="assess-section" id="assessSection"></div>
+  </div>
+</div>
+
+<!-- LOGO MODAL -->
+<div class="logo-modal-overlay" id="logoModal" style="display:none;" onclick="if(event.target===this)closeLogoGuide()">
+  <div class="logo-modal">
+    <div class="logo-modal-hdr">
+      <div><h2>🖼 Logo Update Guide</h2></div>
+      <button class="modal-close" onclick="closeLogoGuide()">✕</button>
+    </div>
+    <div class="logo-modal-body" id="logoModalBody"></div>
+    <div class="logo-modal-footer"><button class="close-logo-btn" onclick="closeLogoGuide()">Got it — Close</button></div>
+  </div>
+</div>
+
+<!-- MAIN MODAL -->
+<div class="modal-overlay" id="modal" style="display:none;" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title" id="modalTitle">—</div>
+        <div class="modal-sub" id="modalSub">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-tabs" id="modalTabs"></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <div class="modal-footer-left" id="statusBtns"></div>
+      <button class="copy-btn" id="copyBtn" onclick="copyPrompt()">📋 Copy Prompt</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA: TOPICS
+// ═══════════════════════════════════════════════════════
+const TOPICS = [
+  { n:1, name:"Experimental Chemistry",
+    pureOnly:false,
+    los:["Name and select apparatus for time, temperature, mass, volume measurement","Separation: filtration + crystallisation/evaporation; distillation; fractional distillation; paper chromatography","Interpret paper chromatograms by Rf comparison","Deduce identity and purity from melting point and boiling point data","Suggest suitable separation method for given mixture"],
+    sg:["NEWater plant uses filtration and distillation for water purification","SFA food-testing labs use chromatography to detect food dyes in hawker snacks","Lab safety rules align with Singapore's Workplace Safety and Health Act"],
+    diagrams:["Filtration setup","Distillation and fractional distillation apparatus","Chromatography paper with solvent front and spots"],
+    graphs:["Rate of reaction graph (volume of gas vs time) for rate measurement context"],
+    common:["Confusing filtrate with residue","Comparing Rf values incorrectly — must compare to known substance","Stating boiling point equals melting point for pure substances","Confusing distillation with fractional distillation"],
+    starred:["Melting/boiling point as purity indicators — pure substance has sharp fixed values","Rf comparison: Rf of sample = Rf of known substance (calculation NOT required)","Separation method selection based on properties of mixture"]
+  },
+  { n:2, name:"Kinetic Particle Theory",
+    pureOnly:false,
+    los:["Describe solids, liquids, gases in terms of particle arrangement, movement and energy","Explain interconversion between states using KPT and energy changes","Interpret heating/cooling curves for pure substances"],
+    sg:["HDB flat analogy: solid=fixed seats in hawker centre, liquid=kopitiam movement, gas=open MRT platform","NEWater boiling and condensation cycle during purification","Ice kacang — solid water melting at room temperature"],
+    diagrams:["Particle arrangement diagrams: solid, liquid, gas","Heating/cooling curve — temperature vs time with labelled plateaus"],
+    graphs:["Heating/cooling curve for a pure substance"],
+    common:["Saying 'particles stop moving' in solids — they vibrate!","Saying 'bonds break' — must say 'forces of attraction between particles are overcome'","Mixing up melting with dissolving","Not explaining energy changes at plateau regions"],
+    starred:["State changes: 'forces of attraction between particles are overcome'","Solid particles: vibrate about fixed positions — they do NOT stop moving","Plateau on heating curve: temperature constant because energy used to overcome forces, not raise temperature","Gas pressure: particles collide with walls of container"]
+  },
+  { n:3, name:"Atomic Structure",
+    pureOnly:false,
+    los:["Relative charges and approximate relative masses of proton, neutron, electron","Proton (atomic) number and nucleon (mass) number","Interpret nuclide notation e.g. ¹²₆C","Define isotopes and explain same chemical properties","Electronic configuration for elements Z=1 to 20","Deduce numbers of p, n, e in atoms and ions","Relative atomic mass (Ar) calculation from isotope data — Pure","Atomic radius increasing down Group 1 — Pure","Atomic radius across Period 3 — data interpretation only — Pure"],
+    sg:["⁶Li/⁷Li isotopes in lithium-ion batteries powering Singapore's EV buses (Green Plan 2030)","Carbon-14 used in dating NHB heritage artefacts","Iodine-131 used in thyroid cancer treatment at SGH"],
+    diagrams:["Atomic structure: protons + neutrons in nucleus, electrons in shells","Electron shell diagrams for elements Z=1–20"],
+    graphs:["None required"],
+    common:["Saying isotopes have 'same electrons' — must say 'same valence electrons'","Confusing nucleon number with proton number","Saying isotopes have different chemical properties","Writing electronic configuration incorrectly (e.g. 2,9 for Na — correct is 2,8,1)"],
+    starred:["Isotopes: same proton number, different neutron number","Isotopes: same chemical properties because SAME NUMBER OF VALENCE ELECTRONS — NEVER 'same electrons'","Electronic configuration: period = number of shells; group = valence electrons","Ion formation: lose electrons → positive ion; gain electrons → negative ion","Ar = Σ(isotopic mass × fractional abundance) — data always provided; NEVER recalled"]
+  },
+  { n:4, name:"Chemical Bonding & Structure",
+    pureOnly:false,
+    los:["Ionic bonding: electron transfer, lattice, electrostatic attraction","Covalent bonding: electron sharing; dot-and-cross diagrams","Simple molecular: low mp/bp due to weak intermolecular forces","Giant ionic lattice: high mp/bp, conducts when molten or aqueous","Metallic bonding: positive ions in sea of delocalised electrons — Pure","Giant covalent: diamond, graphite, SiO₂ — Pure","Alloys: different-sized atoms disrupt regular layers — Pure","Properties from structure: conductivity, melting point, solubility"],
+    sg:["HDB reinforcing steel bars — iron alloy stronger than pure iron","MRT aluminium alloy carriage panels — lighter and harder than pure Al","Cookware Teflon (PTFE) — giant covalent-like polymer, non-stick"],
+    diagrams:["Dot-and-cross diagrams: H₂O, NH₃, CH₄, CO₂, HCl, NaCl, MgO","Giant ionic lattice (NaCl structure)","Diamond tetrahedral structure","Graphite layered structure"],
+    graphs:["None required"],
+    common:["Saying 'covalent bonds break' when simple covalent melts — intermolecular forces break","Saying metallic bonding = ionic bonding","Confusing giant covalent with simple molecular","Saying graphite is an insulator — it conducts via delocalised electrons","Saying alloy is weaker — alloys are HARDER than pure metals"],
+    starred:["Ionic: strong electrostatic forces → high mp, conducts when molten or aqueous only","Simple covalent: weak intermolecular forces → low mp, no ions → non-conductor","Giant covalent (Pure): many strong covalent bonds → very high mp, non-conductor (except graphite)","Metallic (Pure): delocalised electrons → conducts; close-packed → malleable/ductile","Alloy (Pure): different-sized atoms disrupt layers → prevents sliding → harder"]
+  },
+  { n:5, name:"Chemical Calculations",
+    pureOnly:false,
+    los:["Relative atomic mass (Ar) and relative molecular/formula mass (Mr)","Mole concept: amount = mass/Mr; Avogadro constant 6.02×10²³","Concentration: mol/dm³ and g/dm³","Molar volume of gas at r.t.p. = 24 dm³/mol","Stoichiometric calculations from balanced equations","Limiting reagent and excess reagent","% yield and % purity — Pure","Titration calculations including back titration — Pure"],
+    sg:["PUB water treatment: concentration of chlorine in NEWater in mol/dm³","Jurong Island petrochemical plant: % yield calculations for industrial processes"],
+    diagrams:["None required"],
+    graphs:["None required"],
+    common:["Using 22.4 dm³ instead of 24 dm³ — NEVER 22.4","Not identifying limiting reagent before calculating yield","Giving answers to wrong significant figures","Confusing mol/dm³ with g/dm³","Forgetting % yield = (actual/theoretical) × 100"],
+    starred:["Molar volume at r.t.p. = 24 dm³/mol — NEVER 22.4 dm³","Limiting reagent: completely consumed, determines maximum product","All answers to 3 s.f.; temperature 1 d.p.; burette readings 2 d.p.","% yield = (actual yield / theoretical yield) × 100 — Pure","% purity = (mass of pure substance / total mass) × 100 — Pure"]
+  },
+  { n:6, name:"Acids & Bases",
+    pureOnly:false,
+    los:["Acid: produces H⁺(aq) in water; alkali: produces OH⁻(aq) in water","pH scale 0–14; universal indicator colour chart","Reactions: acid + metal, acid + base, acid + carbonate, acid + alkali","Neutralisation ionic equation: H⁺(aq) + OH⁻(aq) → H₂O(l)","Oxides: acidic, basic, amphoteric (Al₂O₃, ZnO), neutral","Strong vs weak acids — Pure: extent of ionisation; pH comparison at same concentration"],
+    sg:["Limestone (CaCO₃) neutralises acidic soil at Lim Chu Kang farms","Antacid tablets (Mg(OH)₂, Al(OH)₃) neutralise stomach acid — sold at Watsons","Acid rain in Singapore from Sumatra haze — SO₂ + H₂O"],
+    diagrams:["pH scale with UI colour chart and examples"],
+    graphs:["pH vs volume of alkali added — titration curve context"],
+    common:["Forgetting H⁺ + OH⁻ → H₂O for neutralisation","Confusing amphoteric with neutral oxides","Saying strong acid = concentrated acid — DIFFERENT concepts — Pure"],
+    starred:["Acid definition: dissociates in water to produce H⁺(aq)","Neutralisation: H⁺(aq) + OH⁻(aq) → H₂O(l)","Amphoteric oxides react with BOTH acids AND alkalis","Strong acid: fully dissociates → lower pH at same concentration — Pure","Weak acid: partially dissociates → higher pH at same concentration — Pure"]
+  },
+  { n:7, name:"Salts Preparation",
+    pureOnly:false,
+    los:["Solubility rules for common salts","Soluble salts: acid + metal, acid + insoluble base (excess), acid + alkali (titration)","Insoluble salts: precipitation from two aqueous solutions","Ionic equations for precipitation reactions","State symbols required in all ionic equations"],
+    sg:["NEWater precipitation to remove phosphate ions from waste water","Limestone caves (CaCO₃) — naturally occurring insoluble carbonate salt"],
+    diagrams:["Filtration and crystallisation setup for soluble salt preparation","Precipitation setup: two solutions mixed"],
+    graphs:["None required"],
+    common:["Using acid + soluble base for insoluble salt — wrong method; use two solutions","Forgetting to add excess insoluble base in acid + base method","Omitting state symbols in ionic equations","Confusing precipitate with residue"],
+    starred:["All nitrates soluble; all Na/K/NH₄ salts soluble; most chlorides soluble (except AgCl, PbCl₂)","Most carbonates insoluble (except Na/K/NH₄); BaSO₄ insoluble; AgCl insoluble","Insoluble salt: mix two solutions → precipitate; filter; wash; dry","Ionic equation must include state symbols (s)(l)(g)(aq) — always"]
+  },
+  { n:8, name:"Ammonia + Haber Process",
+    pureOnly:false,
+    los:["Properties of ammonia: alkaline gas, turns damp red litmus blue","Haber Process: N₂(g) + 3H₂(g) ⇌ 2NH₃(g); conditions: 450°C, 200 atm, iron catalyst","Reasons for conditions: compromise between rate and yield","Uses: fertilisers (ammonium nitrate, ammonium sulfate, urea)"],
+    sg:["Singapore imports nitrogen fertilisers — Haber Process products","Ammonium nitrate used on Lim Chu Kang farms for food production"],
+    diagrams:["Flow diagram of Haber Process with recycling loop"],
+    graphs:["None required"],
+    common:["Saying catalyst increases yield — it only increases RATE","Saying higher temperature always increases yield — for Haber it DECREASES equilibrium yield","Forgetting iron is the specific catalyst"],
+    starred:["Haber: 450°C — compromise (fast enough rate, acceptable yield)","200 atm — high pressure favours product side (fewer moles gas on right)","Iron catalyst: increases RATE only; does NOT shift equilibrium","NH₃: alkaline gas, turns damp red litmus blue, pungent smell"]
+  },
+  { n:9, name:"Qualitative Analysis",
+    pureOnly:false,
+    los:["Cation tests with NaOH and NH₃: Al³⁺, NH₄⁺, Ca²⁺, Cu²⁺, Fe²⁺, Fe³⁺, Zn²⁺","Anion tests: CO₃²⁻ (dilute acid), Cl⁻ (HNO₃ + AgNO₃ white ppt), NO₃⁻, SO₄²⁻","Gas tests: NH₃, CO₂, Cl₂, H₂, O₂, SO₂, HCl","Halide tests — Pure: Br⁻ (cream ppt), I⁻ (yellow ppt) with acidified AgNO₃"],
+    sg:["PUB tests reservoir water for heavy metal cations (Cu²⁺, Fe²⁺/³⁺)","Jurong Island industrial effluent testing — SO₄²⁻ and CO₃²⁻ anion tests","NEWater chlorination — Cl₂ gas test used in quality control"],
+    diagrams:["Cation precipitate colour chart: white (Al,Ca,Zn), light blue (Cu), green (Fe²⁺), red-brown (Fe³⁺)","Gas test setup diagrams"],
+    graphs:["None required"],
+    common:["Confusing Al³⁺ with Zn²⁺ — both white ppt, but Al³⁺ insoluble in excess NH₃","Using HCl instead of HNO₃ to acidify before Cl⁻ or SO₄²⁻ tests","Saying 'turns litmus red' without specifying 'damp blue litmus paper'"],
+    starred:["Al³⁺: white ppt NaOH (excess: soluble); white ppt NH₃ (excess: insoluble)","Zn²⁺: white ppt NaOH (excess: soluble); white ppt NH₃ (excess: soluble)","Cu²⁺: light blue ppt with NaOH; deep blue solution with excess NH₃","SO₄²⁻: acidify with HNO₃ + Ba(NO₃)₂ → white ppt","Cl⁻: acidify with HNO₃ + AgNO₃ → white ppt; Br⁻ → cream; I⁻ → yellow (Pure)"]
+  },
+  { n:10, name:"Redox Chemistry",
+    pureOnly:false,
+    los:["Oxidation/reduction in terms of oxygen and hydrogen gain/loss","Oxidation/reduction in terms of electron transfer","Oxidation state: assign and identify changes","OIL RIG","Identify oxidising and reducing agents","KMnO₄ (purple→colourless) and KI (colourless→brown) as tests","Half-equations: balance atoms and charges; combine to full ionic equation — Pure"],
+    sg:["Rusting of HDB iron railings — iron oxidised by O₂ and water","Bleach (Cl₂) used in NEWater disinfection — oxidising agent","Aluminium oxide layer on MRT aluminium panels — protective oxidation"],
+    diagrams:["None required"],
+    graphs:["None required"],
+    common:["Reversing OIL RIG — writing it backwards","Saying KI 'turns blue' — starch turns blue, not KI; KI produces brown I₂","Not balancing charges when writing half-equations — Pure","Forgetting state symbols in half-equations and ionic equations — Pure"],
+    starred:["OIL RIG: Oxidation Is Loss of electrons; Reduction Is Gain of electrons","Oxidation: gain O / lose H / lose e⁻","KMnO₄: purple → colourless (acts as oxidising agent)","KI: colourless → brown (I₂ forms; KI is reducing agent)","Half-equation: balance atoms first, then add e⁻ to balance charge — Pure"]
+  },
+  { n:11, name:"Electrochemistry",
+    pureOnly:true,
+    los:["Electrolysis: decomposition by electrical energy","Cathode: reduction (positive ions gain electrons); anode: oxidation","Electrolysis of molten electrolytes (e.g. molten PbBr₂, NaCl)","Electrolysis of aqueous electrolytes: selective discharge based on reactivity and concentration","Electroplating: object = cathode; plating metal = anode","Simple cells: two different metals, electrolyte, voltmeter","Hydrogen fuel cell: H₂ + O₂ → H₂O; produces electricity"],
+    sg:["Copper refining by electrolysis in Singapore industrial chemistry","NEWater electrolysis for chlorine disinfection","LTA piloting hydrogen fuel cell buses — zero emission"],
+    diagrams:["Electrolysis setup: power supply, electrodes, electrolyte labelled","Electroplating setup: copper plating on iron","Fuel cell diagram"],
+    graphs:["None required"],
+    common:["Confusing cathode and anode — cathode is negative; anode is positive","Saying cathode is positive — it is NEGATIVE (connected to –ve terminal)","Forgetting selective discharge: less reactive ion discharged preferentially","Not including state symbols in electrode equations"],
+    starred:["Cathode (–ve): cations attracted; REDUCTION (gain electrons)","Anode (+ve): anions attracted; OXIDATION (lose electrons)","Selective discharge: position in reactivity series determines which ion discharged","Electroplating: object to plate = cathode; plating metal = anode; electrolyte = salt of plating metal","Fuel cell: H₂ oxidised at anode; O₂ reduced at cathode; product = H₂O; produces electricity directly"]
+  },
+  { n:12, name:"Periodic Trends + Groups + Transition Elements",
+    pureOnly:false,
+    los:["Periodic table arranged by increasing proton number","Period trends: metallic character decreases left to right","Group 1 (Li, Na, K): reactivity trend, reactions with water","Group 17 (Cl, Br, I): state and colour trends, displacement reactions","Group 18: unreactive due to full outer shell","Atomic radius DOWN group: more electron shells (recall required)","Transition elements: variable oxidation states, coloured compounds, catalytic properties — Pure"],
+    sg:["Iron (transition metal) in HDB construction — Fe²⁺ light green, Fe³⁺ red-brown","Gold and silver in Singapore jewellery industry — Group 11 transition metals","Titanium in medical implants at SGH — transition metal, biocompatible"],
+    diagrams:["Periodic table position diagram","Group 1 reactivity trend diagram","Group 17 colour and state trend diagram"],
+    graphs:["Reactivity trends: Group 1 increases down; Group 17 decreases down"],
+    common:["Saying 'more protons cause larger atomic radius' — must say 'more electron shells'","Saying Group 17 reactivity increases down group — it DECREASES","Confusing group number with period number","Forgetting transition metals have variable oxidation states — Pure"],
+    starred:["Atomic radius DOWN group: more electron shells → outer electrons further from nucleus (RECALL required)","Group 1: reactivity increases down (easier to lose outermost electron)","Group 17: reactivity decreases down (harder to gain electron into larger shell)","Transition metals (Pure): variable oxidation state; coloured compounds; effective catalysts"]
+  },
+  { n:13, name:"Reactivity Series + Metals",
+    pureOnly:false,
+    los:["Reactivity series: K, Na, Ca, Mg, Zn, Fe, Pb, (H), Cu, Ag","Reactions with water/steam/dilute HCl: pattern by reactivity","Displacement reactions: more reactive displaces less reactive from salt solution","Rusting: requires O₂ AND water; prevention: barrier, galvanising, sacrificial protection","Ease of extraction linked to reactivity: electrolysis vs reduction by carbon"],
+    sg:["HDB iron railings rust — barrier protection by painting or galvanising","MRT aluminium alloy — forms protective Al₂O₃ oxide layer","Singapore gold reserves — gold very unreactive, found native","Copper in Singapore electrical infrastructure — low reactivity, good conductor"],
+    diagrams:["Reactivity series diagram with reaction types","Rusting prevention methods labelled"],
+    graphs:["None required"],
+    common:["Forgetting rusting needs BOTH O₂ AND water — not just one","Saying 'extracted by heating alone' for reactive metals — electrolysis required","Confusing displacement with precipitation reactions"],
+    starred:["Reactivity: K > Na > Ca > Mg > Zn > Fe > Pb > (H) > Cu > Ag","Rusting requires BOTH O₂ AND water simultaneously","Displacement: more reactive metal + salt solution of less reactive metal → reaction occurs","Metals above carbon extracted by electrolysis; below by reduction with carbon/coke"]
+  },
+  { n:14, name:"Chemical Energetics",
+    pureOnly:true,
+    los:["Exothermic: energy transferred to surroundings → temperature increases","Endothermic: energy absorbed from surroundings → temperature decreases","Temperature vs time graphs for exothermic and endothermic reactions","Bond energy: energy to break one mole of bonds in gaseous molecules — qualitative","Energy profile diagrams: Ea, ΔH, transition state","Qualitative bond energy reasoning: bond breaking endothermic; bond forming exothermic"],
+    sg:["Hand warmers (iron oxidation) sold at Watsons — exothermic","Cold packs (NH₄NO₃ dissolving) used by Singapore Red Cross — endothermic","Combustion of natural gas (methane) in HDB stoves — exothermic","Photosynthesis in Bukit Timah NR plants — endothermic"],
+    diagrams:["Energy profile diagram: exothermic (Ea, ΔH negative)","Energy profile diagram: endothermic (Ea, ΔH positive)"],
+    graphs:["Temperature vs time: exothermic (rises then cools)","Temperature vs time: endothermic (drops then warms)"],
+    common:["Saying 'temperature of reaction' — must say 'temperature of SURROUNDINGS'","Saying 'energy is destroyed' in endothermic — energy is ABSORBED","Saying exothermic 'releases' energy — say 'transfers energy TO surroundings'","Confusing activation energy (Ea) with enthalpy change (ΔH)"],
+    starred:["Exothermic: energy transferred TO surroundings → temperature of surroundings INCREASES","Endothermic: energy absorbed FROM surroundings → temperature of surroundings DECREASES","Bond breaking is endothermic (absorbs energy); bond forming is exothermic — qualitative only","Activation energy Ea: minimum energy reacting particles must possess for reaction to occur","Catalyst: lowers Ea; provides alternative pathway; ΔH unchanged"]
+  },
+  { n:15, name:"Rate of Reactions",
+    pureOnly:false,
+    los:["Factors: concentration, pressure, particle size, temperature","Collision theory explanation for each factor","Interpret volume of gas vs time graphs","Activation energy (Ea): minimum energy for a collision to result in reaction — Pure","Catalyst: lowers Ea, increases rate, not consumed; shown on energy profile — Pure"],
+    sg:["Crushing antacid tablets — particle size effect on rate","Food spoilage in hot Singapore climate vs cold storage — temperature effect","Pressure cooker in hawker stall kitchen — increased pressure speeds cooking"],
+    diagrams:["None required"],
+    graphs:["Volume of gas vs time: steeper gradient = faster rate; same final volume = same limiting reactant","Two curves on same axes comparing different conditions"],
+    common:["Saying 'more collisions' without 'more SUCCESSFUL/EFFECTIVE collisions'","Saying catalyst increases yield — it only increases RATE","Confusing rate of reaction with amount of product"],
+    starred:["Rate increases → more FREQUENT and more ENERGETICALLY SUCCESSFUL collisions","Concentration/pressure: more particles per unit volume → more frequent collisions","Temperature: particles have more kinetic energy → more exceed Ea → more successful collisions","Surface area: greater surface area → more particles exposed → more frequent collisions","Catalyst (Pure): lowers Ea, provides alternative pathway, not consumed, ΔH unchanged"]
+  },
+  { n:16, name:"Organic: Alkanes + Alkenes",
+    pureOnly:false,
+    los:["Homologous series: same functional group, general formula, similar chemical properties","Alkanes CₙH₂ₙ₊₂: saturated, draw C1–C4, combustion (complete/incomplete), substitution by Cl₂","Cracking: large alkane → smaller alkane + alkene + H₂ (three products)","Alkenes CₙH₂ₙ: unsaturated (C=C), draw C2–C3, test with bromine water","Alkene reactions: combustion, addition (Br₂, H₂, HBr), addition polymerisation","Hydration of alkenes — Pure: alkene + H₂O; H₃PO₄ catalyst; high temp and pressure → alcohol"],
+    sg:["Jurong Island refinery: crude oil fractional distillation and catalytic cracking","Poly(ethene) cling film used in hawker centre food stalls","Bioethanol from sugarcane being explored as renewable biofuel supplement in Singapore"],
+    diagrams:["Structural formulae: methane, ethane, propane, butane, ethene, propene","Addition polymerisation: ethene → poly(ethene) with repeat unit notation"],
+    graphs:["None required"],
+    common:["Drawing wrong structural formula — forgetting H atoms","Confusing substitution (alkanes, UV light) with addition (alkenes, no light needed)","Saying cracking produces only alkenes — ALWAYS gives alkane + alkene + H₂","Forgetting hydration conditions: H₃PO₄ catalyst; high temp AND pressure — Pure"],
+    starred:["Alkane CₙH₂ₙ₊₂ — SATURATED (only C–C single bonds)","Alkene CₙH₂ₙ — UNSATURATED (C=C double bond)","Bromine water test: alkene decolourises (addition); alkane does NOT","Cracking: large alkane → smaller alkane + alkene + H₂ (three products always)","Hydration (Pure): alkene + H₂O → alcohol; H₃PO₄ catalyst; high temp/pressure"]
+  },
+  { n:17, name:"Organic: Alcohols + Carboxylic Acids",
+    pureOnly:false,
+    los:["Alcohols: –OH group, CₙH₂ₙ₊₁OH, combustion, oxidation to carboxylic acid","Fermentation: glucose + yeast → ethanol + CO₂ (~37°C, anaerobic)","Carboxylic acids: –COOH group, reactions with Na, NaOH, Na₂CO₃, NaHCO₃","Distinguish alcohol from carboxylic acid: Na₂CO₃ test","Esterification — Pure: alcohol + carboxylic acid → ester + water; conc H₂SO₄, heat; reversible"],
+    sg:["Bioethanol fermentation from sugarcane — explored as renewable fuel","Vinegar (ethanoic acid) used in hawker centre sambal — carboxylic acid in food","Fruit esters as food flavourings in Singapore confectionery industry — Pure context"],
+    diagrams:["Structural formulae: methanol, ethanol, propanol, ethanoic acid","Ester formation reaction diagram — Pure"],
+    graphs:["None required"],
+    common:["Forgetting fermentation requires yeast AND anaerobic conditions","Saying alcohol reacts with Na₂CO₃ — it does NOT (only carboxylic acid does)","Reversing esterification — water is ALWAYS a product — Pure","Confusing esterification (H₂SO₄ catalyst) with fermentation (yeast)"],
+    starred:["Alcohol: combustion → CO₂ + H₂O; oxidation (acidified KMnO₄) → carboxylic acid","Fermentation: glucose + yeast, ~37°C, anaerobic → ethanol + CO₂","Carboxylic acid + Na₂CO₃ → effervescence (CO₂); alcohol + Na₂CO₃ → no reaction","Esterification (Pure): alcohol + carboxylic acid ⇌ ester + water; conc H₂SO₄, heat; reversible"]
+  },
+  { n:18, name:"Organic: Esters + Polymers + Isomers",
+    pureOnly:true,
+    los:["Esters: naming, formation, uses (flavourings, solvents, biodiesel)","Addition polymers: poly(ethene), poly(propene), poly(chloroethene)","Condensation polymers: nylon (diamine + diacid → amide link –CO–NH–); Terylene (diol + diacid → ester link –COO–)","Structural isomers: same molecular formula, different structural formula","Biodegradable vs non-biodegradable plastics; recycling methods","Depolymerisation: hydrolysis of polyesters"],
+    sg:["Semakau Landfill — non-biodegradable plastics a major waste challenge in Singapore","NTUC FairPrice plastic bag recycling scheme — addresses plastic pollution","Biodiesel from used cooking oil (Jurong Island processing) — ester-based fuel"],
+    diagrams:["Ester link: –COO– structure","Nylon: –CO–NH– amide link formation diagram","Terylene: –COO– ester link formation","Structural isomer examples for C₄H₁₀"],
+    graphs:["None required"],
+    common:["Confusing addition polymerisation (no small molecule lost) with condensation (water lost)","Confusing nylon link (amide –CO–NH–) with Terylene link (ester –COO–)","Drawing structural isomers with wrong molecular formula — must be same formula, different structure","Saying biodegradable = better in all contexts — depends on disposal route"],
+    starred:["Ester link: –COO– formed from alcohol + carboxylic acid","Nylon: from diamine + diacid; amide link –CO–NH–; small molecule lost = H₂O","Terylene: from diol + diacid; ester link –COO–; small molecule lost = H₂O","Structural isomers: same molecular formula, different structural formula","Non-biodegradable plastics → Semakau Landfill; recycling needed to reduce burden"]
+  },
+  { n:19, name:"Maintaining Air Quality",
+    pureOnly:false,
+    los:["Dry air composition: ~78% N₂, ~21% O₂, remainder noble gases and CO₂","Pollutants: CO, CH₄, NOₓ, SO₂, unburned hydrocarbons, ozone","Sources and effects of each pollutant","Carbon cycle: combustion + respiration add CO₂; photosynthesis removes CO₂","CO₂ and CH₄ as greenhouse gases; effects: extreme weather, melting polar ice","Acid rain: SO₂ + NO₂ + rainwater → H₂SO₄ + HNO₃","Catalytic converters: reduce CO, NOₓ, unburned hydrocarbons — Pure","Flue gas desulfurisation: CaCO₃/CaO + SO₂ — Pure"],
+    sg:["PSI (Pollutant Standards Index) monitored daily — SO₂, NOₓ, PM2.5","Haze from Indonesian forest fires — SO₂ and particulate levels spike","Singapore net-zero by 2050 — reducing CO₂ and CH₄ emissions","Carbon tax on industrial CO₂ emissions introduced in Singapore"],
+    diagrams:["Carbon cycle diagram: combustion, respiration, photosynthesis arrows with CO₂","Catalytic converter diagram — Pure"],
+    graphs:["None required"],
+    common:["Saying CO₂ causes acid rain — acid rain is caused by SO₂ and NO₂, NOT CO₂","Saying greenhouse effect = global warming","Forgetting CO is toxic (blocks haemoglobin)","Saying 'plants make oxygen' — must say 'CO₂ is removed from atmosphere by photosynthesis'"],
+    starred:["Air: ~78% N₂, ~21% O₂, ~1% noble gases (mainly Ar), ~0.04% CO₂","CO: toxic (binds haemoglobin), from incomplete combustion","SO₂ + NO₂ → acid rain → respiratory harm + building/limestone damage","CO₂ + CH₄: greenhouse gases → global warming → extreme weather + melting polar ice","Carbon cycle: combustion + respiration ADD CO₂; photosynthesis REMOVES CO₂"]
+  }
+];
+
+// ═══════════════════════════════════════════════════════
+// DATA: FILE TYPES (Weekly — F0 to F10, 11 files)
+// ═══════════════════════════════════════════════════════
+const FILES = [
+  { n:0,  label:"Free Preview",      short:"Preview", icon:"🆓", type:"html", ext:".html", colClass:"f-free" },
+  { n:1,  label:"Lesson Notes",      short:"Notes",   icon:"📝", type:"docx", ext:".docx", colClass:"f-docx" },
+  { n:2,  label:"Worksheet Comb",    short:"WS-C",    icon:"📋", type:"docx", ext:".docx", colClass:"f-docx" },
+  { n:3,  label:"Worksheet Pure",    short:"WS-P",    icon:"📄", type:"docx", ext:".docx", colClass:"f-docx" },
+  { n:4,  label:"PPT Slides",        short:"Slides",  icon:"🎨", type:"pptx", ext:".pptx", colClass:"f-pptx" },
+  { n:5,  label:"Flashcard PPTX",    short:"FC-PPT",  icon:"🃏", type:"pptx", ext:".pptx", colClass:"f-pptx" },
+  { n:6,  label:"Quiz",              short:"Quiz",    icon:"🧪", type:"html", ext:".html", colClass:"f-html" },
+  { n:7,  label:"Flashcard Flipper", short:"Flipper", icon:"🔁", type:"html", ext:".html", colClass:"f-html" },
+  { n:8,  label:"Fill Blanks",       short:"FitB",    icon:"✏️", type:"html", ext:".html", colClass:"f-html" },
+  { n:9,  label:"Drag & Drop",       short:"D&D",     icon:"🎯", type:"html", ext:".html", colClass:"f-html" },
+  { n:10, label:"App Bank",          short:"F10",     icon:"🏆", type:"html", ext:".html", colClass:"f-app"  }
+];
+
+// ═══════════════════════════════════════════════════════
+// DATA: CC FILES (CC0–CC6, 7 files)
+// ═══════════════════════════════════════════════════════
+const CC_FILES = [
+  { n:0, label:"Condensed Notes",  short:"CC0 Notes",    icon:"📄", type:"html", colClass:"f-cc"  },
+  { n:1, label:"Exam Cheat Sheet", short:"CC1 Cheat",    icon:"📋", type:"html", colClass:"f-cc"  },
+  { n:2, label:"Answer Technique", short:"CC2 Technique",icon:"🎯", type:"html", colClass:"f-cc"  },
+  { n:3, label:"Mistakes Drill",   short:"CC3 Drill",    icon:"⚠️",  type:"html", colClass:"f-cc"  },
+  { n:4, label:"Rapid Fire",       short:"CC4 Rapid",    icon:"⚡", type:"html", colClass:"f-cc"  },
+  { n:5, label:"Daily Quiz",       short:"CC5 Quiz",     icon:"🧪", type:"html", colClass:"f-cc"  },
+  { n:6, label:"Mini Final Exam",  short:"CC6 Exam",     icon:"📝", type:"html", colClass:"f-cc6" }
+];
+
+// ═══════════════════════════════════════════════════════
+// DATA: ASSESSMENTS (6 cards)
+// ═══════════════════════════════════════════════════════
+const ASSESSMENTS = [
+  { id:'s3diag',  label:"S3 Diagnostic Test",              type:"diagnostic_s3" },
+  { id:'s4diag',  label:"S4 Diagnostic Test",              type:"diagnostic_s4" },
+  { id:'diagres', label:"Diagnostic Results + Gated Form", type:"diag_results"  },
+  { id:'cc6s3',   label:"CC6 — S3 Pure Final Exam",        type:"cc6_s3"        },
+  { id:'cc6s4',   label:"CC6 — S4 Pure Final Exam",        type:"cc6_s4"        },
+  { id:'ccref',   label:"CC-REF Pure Master Reference Pack",type:"ccref"         }
+];
+
+// ═══════════════════════════════════════════════════════
+// STATE MANAGEMENT
+// ═══════════════════════════════════════════════════════
+const STORAGE_KEY    = 'lfc_pure_wt_v4';
+const CC_STORAGE_KEY = 'lfc_pure_cc_v4';
+let state   = {};
+let ccState = {};
+
+function loadState() {
+  try { const s = localStorage.getItem(STORAGE_KEY); if (s) state = JSON.parse(s); } catch(e) { state = {}; }
+  // U3 Atomic Structure — GOLD STANDARD — all 11 files locked gold
+  for (const f of FILES) {
+    const k = `3_${f.n}`;
+    if (!state[k]) state[k] = 'gold';
+  }
+  try { const s2 = localStorage.getItem(CC_STORAGE_KEY); if (s2) ccState = JSON.parse(s2); } catch(e) { ccState = {}; }
+}
+function saveState()   { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function saveCCState() { localStorage.setItem(CC_STORAGE_KEY, JSON.stringify(ccState)); }
+function getStatus(tn, fn)   { return state[`${tn}_${fn}`] || 'not'; }
+function getCCStatus(tn, fn) { return ccState[`cc_${tn}_${fn}`] || 'not'; }
+function getAssessStatus(id) { return ccState[`assess_${id}`] || 'not'; }
+
+function setStatus(tn, fn, status) {
+  if (tn === 3) return; // U3 gold standard — locked
+  state[`${tn}_${fn}`] = status;
+  saveState(); renderGrid(); updateStats(); updateModalStatusBtns(tn, fn);
+}
+function setCCStatus(tn, fn, status) {
+  const k = `cc_${tn}_${fn}`;
+  ccState[k] = status;
+  saveCCState(); renderCCGrid(); updateStats(); updateCCModalStatusBtns(tn, fn);
+}
+function setAssessStatus(id, status) {
+  ccState[`assess_${id}`] = status;
+  saveCCState(); renderAssessments(); updateStats();
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER: WEEKLY GRID
+// ═══════════════════════════════════════════════════════
+let currentFilter = 'all';
+let currentMainTab = 'weekly';
+
+function switchMainTab(tab) {
+  currentMainTab = tab;
+  document.getElementById('weeklyTabContent').style.display = tab === 'weekly' ? 'block' : 'none';
+  document.getElementById('ccTabContent').style.display = tab === 'cc' ? 'block' : 'none';
+  document.getElementById('tabWeekly').className = 'tab-toggle-btn' + (tab === 'weekly' ? ' active' : '');
+  document.getElementById('tabCC').className = 'tab-toggle-btn' + (tab === 'cc' ? ' cc-active' : '');
+  updateStats();
+  if (tab === 'cc') { renderCCGrid(); renderAssessments(); }
+}
+
+function setFilter(f, e) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (e && e.target) e.target.classList.add('active');
+  if (currentMainTab === 'weekly') renderGrid();
+  else renderCCGrid();
+}
+
+function renderGrid() {
+  const hdrRow = document.getElementById('colHeaders');
+  hdrRow.innerHTML = `<th class="col-hdr" style="border-radius:10px 0 0 0;">Topic</th>` +
+    FILES.map((f,i) => `<th class="col-hdr ${f.colClass}" ${i===FILES.length-1?'style="border-radius:0 10px 0 0;"':''}><span class="file-num">${f.icon}</span><span class="file-type">F${f.n} ${f.short}</span></th>`).join('');
+
+  const tbody = document.getElementById('gridBody');
+  tbody.innerHTML = '';
+
+  for (const topic of TOPICS) {
+    if (currentFilter !== 'all') {
+      const anyMatch = FILES.some(f => {
+        const s = getStatus(topic.n, f.n);
+        return (s === 'gold' ? 'done' : s) === currentFilter;
+      });
+      if (!anyMatch) continue;
+    }
+
+    const isGold = topic.n === 3;
+    const topicDone = FILES.filter(f => { const s = getStatus(topic.n, f.n); return s==='done'||s==='gold'; }).length;
+
+    const pureLabel = topic.pureOnly
+      ? `<span class="pure-only-badge">⚗ PURE ONLY</span>`
+      : (FILES.some(() => false) ? '' : '');
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="topic-hdr ${isGold?'topic-gold':''}">
+      <span class="topic-num">${topic.n}</span>${topic.name}${isGold?'<span class="gold-star">⭐</span>':''}${topic.pureOnly?` <span class="pure-only-badge">⚗ PURE ONLY</span>`:''}
+      <div class="topic-meta">
+        ${renderMiniRing(topicDone, FILES.length)}
+        <span class="topic-progress-text">${topicDone}/${FILES.length} files</span>
+      </div>
+    </td>`;
+
+    for (const file of FILES) {
+      const td = document.createElement('td');
+      const status = getStatus(topic.n, file.n);
+      td.className = `cell status-${status}`;
+      td.dataset.topic = topic.n;
+      td.dataset.file = file.n;
+      const labels = { not:'Not Started', prog:'In Progress', done:'Done ✓', gold:'Gold Standard ⭐' };
+      td.innerHTML = `<button class="cell-btn" onclick="openModal(${topic.n},${file.n})">
+        <span class="cell-icon">${file.icon}</span>
+        <span class="cell-label">${file.short}</span>
+        <span class="cell-status">${labels[status]||'—'}</span>
+      </button>`;
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+}
+
+function renderMiniRing(done, total) {
+  const pct = total > 0 ? done/total : 0;
+  const r = 9, cx = 10, cy = 10;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - pct);
+  const color = done === total ? '#276749' : done > 0 ? '#B45309' : '#3D3162';
+  return `<svg width="20" height="20" viewBox="0 0 20 20" style="flex-shrink:0;">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#3D3162" stroke-width="2.5"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="2.5"
+      stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
+      transform="rotate(-90 ${cx} ${cy})" style="transition:stroke-dashoffset .4s;"/>
+  </svg>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER: CC GRID
+// ═══════════════════════════════════════════════════════
+function renderCCGrid() {
+  const hdrRow = document.getElementById('ccColHeaders');
+  hdrRow.innerHTML = `<th class="col-hdr" style="border-radius:10px 0 0 0;">Topic</th>` +
+    CC_FILES.map((f,i) => `<th class="col-hdr ${f.colClass}" ${i===CC_FILES.length-1?'style="border-radius:0 10px 0 0;"':''}><span class="file-num">${f.icon}</span><span class="file-type">${f.short}</span></th>`).join('');
+
+  const tbody = document.getElementById('ccGridBody');
+  tbody.innerHTML = '';
+
+  for (const topic of TOPICS) {
+    if (currentFilter !== 'all') {
+      const anyMatch = CC_FILES.some(f => getCCStatus(topic.n, f.n) === currentFilter);
+      if (!anyMatch) continue;
+    }
+    const topicDone = CC_FILES.filter(f => getCCStatus(topic.n, f.n) === 'done').length;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="topic-hdr">
+      <span class="topic-num">${topic.n}</span>${topic.name}
+      ${topic.pureOnly ? `<span class="pure-only-badge">⚗</span>` : ''}
+      <div class="topic-meta">
+        ${renderMiniRing(topicDone, CC_FILES.length)}
+        <span class="topic-progress-text">${topicDone}/${CC_FILES.length} files</span>
+      </div>
+    </td>`;
+
+    for (const ccFile of CC_FILES) {
+      const td = document.createElement('td');
+      const status = getCCStatus(topic.n, ccFile.n);
+      td.className = `cell status-${status}`;
+      td.dataset.cctopic = topic.n;
+      td.dataset.ccfile = ccFile.n;
+      const labels = { not:'Not Started', prog:'In Progress', done:'Done ✓' };
+      td.innerHTML = `<button class="cell-btn" onclick="openCCModal(${topic.n},${ccFile.n})">
+        <span class="cell-icon">${ccFile.icon}</span>
+        <span class="cell-label">${ccFile.short}</span>
+        <span class="cell-status">${labels[status]||'—'}</span>
+      </button>`;
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER: ASSESSMENTS
+// ═══════════════════════════════════════════════════════
+function renderAssessments() {
+  const section = document.getElementById('assessSection');
+  const rows = ASSESSMENTS.map(a => {
+    const status = getAssessStatus(a.id);
+    return `<div class="assess-row">
+      <div class="assess-dot ${status}"></div>
+      <div class="assess-label">${a.label}</div>
+      <button class="assess-prompt-btn" onclick="openAssessModal('${a.id}')">📋 Build Prompt</button>
+      <div class="assess-status-btns">
+        <button class="assess-sb assess-sb-not ${status==='not'?'active':''}" onclick="setAssessStatus('${a.id}','not')">○ Not Started</button>
+        <button class="assess-sb assess-sb-prog ${status==='prog'?'active':''}" onclick="setAssessStatus('${a.id}','prog')">◑ In Progress</button>
+        <button class="assess-sb assess-sb-done ${status==='done'?'active':''}" onclick="setAssessStatus('${a.id}','done')">✓ Done</button>
+      </div>
+    </div>`;
+  }).join('');
+  section.innerHTML = `<div class="assess-hdr"><h3>📊 Assessments &amp; Reference</h3><span>Cross-topic files — built once per intensive</span></div>${rows}`;
+}
+
+// ═══════════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════════
+function updateStats() {
+  let done=0, prog=0, not=0, total=0;
+  if (currentMainTab === 'weekly') {
+    for (const t of TOPICS) for (const f of FILES) {
+      total++;
+      const s = getStatus(t.n, f.n);
+      if (s==='done'||s==='gold') done++; else if (s==='prog') prog++; else not++;
+    }
+    document.getElementById('progressSummary').textContent = `${done}/${total} files (Pure)`;
+  } else {
+    for (const t of TOPICS) for (const f of CC_FILES) {
+      total++;
+      const s = getCCStatus(t.n, f.n);
+      if (s==='done') done++; else if (s==='prog') prog++; else not++;
+    }
+    for (const a of ASSESSMENTS) {
+      total++;
+      const s = getAssessStatus(a.id);
+      if (s==='done') done++; else if (s==='prog') prog++; else not++;
+    }
+    document.getElementById('progressSummary').textContent = `${done}/${total} CC files (Pure)`;
+  }
+  document.getElementById('statDone').textContent = `${done} done`;
+  document.getElementById('statProg').textContent = `${prog} in progress`;
+  document.getElementById('statNot').textContent = `${not} not started`;
+}
+
+// ═══════════════════════════════════════════════════════
+// PROMPT GENERATION — SHARED CONSTANTS
+// ═══════════════════════════════════════════════════════
+function buildPromptHeader(isHTML) {
+  const fileList = isHTML
+    ? `Read these files from the project folder FIRST in this order:
+  1. PURE_INSTRUCTIONS_v1_2.txt
+  2. MASTER_INSTRUCTIONS_v3_3.txt
+  3. PURE_COMPONENT_LIBRARY.html ← copy CSS variables, panel markup, pill classes, badge patterns exactly
+  4. 6092_y26_sy_pure_chemistry_.pdf → extract verbatim LOs for this unit`
+    : `Read these files from the project folder FIRST in this order:
+  1. PURE_INSTRUCTIONS_v1_2.txt
+  2. MASTER_INSTRUCTIONS_v3_3.txt
+  3. 6092_y26_sy_pure_chemistry_.pdf → extract verbatim LOs for this unit`;
+
+  const htmlGate = isHTML
+    ? `✅ Pure hero gradient: #1A1535 → #2D1B4E · Primary accent: #7C6FAB\n✅ DM Sans + DM Mono fonts · CSS variables only (no hardcoded hex)\n✅ Component markup matches PURE_COMPONENT_LIBRARY.html exactly\n`
+    : ``;
+
+  return `${fileList}
+
+SEAB year: 2026 — NEVER 2025
+Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026 · Unit [N]: [Name] (Pure)"
+NEVER "O-Level Science (Chemistry)" in any Pure file.
+
+QUALITY GATE (verify before delivering):
+✅ No Maxwell-Boltzmann · No Le Chatelier's by name · No ionisation energy
+✅ No 22.4 dm³ (24 dm³ ONLY) · No NH₄OH (use NH₃(aq))
+✅ No "turns milky" (white precipitate formed) · No "same electrons" (same valence electrons)
+✅ No "releases" for exothermic (transfers energy TO surroundings)
+✅ State symbols in ALL ionic/half equations · IUPAC groups 1–18 only
+${htmlGate}
+`;
+}
+
+function buildTopicBlock(topic) {
+  const losText   = topic.los.map((lo,i) => `  ${i+1}. ${lo}`).join('\n');
+  const sgText    = topic.sg.map(s => `  - ${s}`).join('\n');
+  const commonText = topic.common.map(c => `  ⚠ ${c}`).join('\n');
+  const starredText = topic.starred.map(s => `  ⭐ ${s}`).join('\n');
+  const diagText   = topic.diagrams.map(d => `  - ${d}`).join('\n');
+  const graphText  = topic.graphs.map(g => `  - ${g}`).join('\n');
+  return { losText, sgText, commonText, starredText, diagText, graphText };
+}
+
+function generatePrompt(topic, file) {
+  const isHTML = file.type === 'html';
+  const header = buildPromptHeader(isHTML);
+  const { losText, sgText, commonText, starredText, diagText, graphText } = buildTopicBlock(topic);
+  const unitSlug = topic.name.replace(/[^a-zA-Z0-9]+/g,'_');
+  const isotoperule = `ISOTOPE RULE: "same number of valence electrons" ALWAYS — NEVER "same electrons"`;
+  const pureExt = topic.pureOnly ? `\n⚗ PURE ONLY UNIT — all content requires ⚗ PURE EXTENSION badge/box.\n` : `\nFLAG Pure-only content with ⚗ PURE EXTENSION boxes (purple #7C6FAB border, #FAF5FF bg).\n`;
+
+  const colourConstants = `BRAND COLOURS (PptxGenJS — no # prefix):
+  teal:"1A7A8A" · tealDk:"0F5A67" · dark:"1A1535" · dark2:"2D1B4E"
+  pureAccent:"7C6FAB" · pureDk:"4A0080" · pureBg:"FAF5FF"
+  cherC:"1A7A8A" cherCLt:"EBF6F8" cherCDk:"0F5A67"
+  cherH:"7C6FAB" cherHLt:"FAF5FF" cherHDk:"4A0080"
+  cherE:"F48FB1" cherELt:"FFF0F5" cherEDk:"C2185B" ← NEVER white on E
+  cherR:"FDE68A" cherRLt:"FFFBEB" cherRDk:"92400E" ← NEVER white on R`;
+
+  let specific = '';
+
+  if (file.n === 0) {
+    specific = `Build FILE 0 — Free Preview (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_FreePreview.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+LEARNING OUTCOMES:
+${losText}
+
+PURPOSE: Funnel entry product. C panel only visible. H/E/R locked/greyed.
+PAGE STRUCTURE:
+[1] Sticky header — logo left, topic badge right
+[2] Hero — gradient #1A1535→#2D1B4E — topic title, SEAB 2026, C pill active, H/E/R greyed
+[3] C panel — concept + Cher Explains Singapore analogy
+[4] R — 3 must-know bullet points only
+[5] 5-question self-check MCQ (correct/incorrect only)
+[6] Upgrade prompt — H/E/R preview locked with padlock + CTA button
+[7] Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026 · Unit ${topic.n}: ${topic.name} (Pure)"
+
+SINGAPORE ANALOGIES: ${sgText}
+COMMONLY TESTED (for self-check): ${starredText}
+${isotoperule}
+Single self-contained HTML. No external JS. DM Sans. Mobile + desktop.`;
+  }
+  else if (file.n === 1) {
+    specific = `Build FILE 1 — Lesson Notes (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_LessonNotes.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+NOTE: No Pure F1 HTML gold standard exists yet — U3 will be the first.
+Use PURE_COMPONENT_LIBRARY.html for all component markup and CSS variables.
+Structure reference: T6_AcidBase_Combined_LessonNotes.html (Combined — adapt CHER panel
+structure and layout only; replace all content with Pure syllabus content).
+
+LEARNING OUTCOMES:
+${losText}
+
+SINGAPORE ANALOGIES:
+${sgText}
+${pureExt}
+CONTENT STRUCTURE — CHER Method per subtopic:
+C — Concept explanation + "Cher Explains" Singapore analogy + .sg-box
+H — Key Exam Keywords: ✓ Write this / ✗ Never say table
+E — Worked example SEAB mark scheme style (marks shown, 3 s.f.) + .app-box
+R — Recap: 3–5 highest-yield bullet points
+
+COMMONLY TESTED (.app-box for each section):
+${starredText}
+
+COMMON MISCONCEPTIONS (.warn-box):
+${commonText}
+
+DIAGRAMS:
+${diagText}
+
+${colourConstants}
+${isotoperule}
+Single self-contained HTML. Full CHER, detailed. DM Sans + DM Mono. Mobile + desktop.
+Sticky header, dark gradient hero (linear-gradient(135deg,#1A1535 0%,#2D1B4E 100%)).`;
+  }
+  else if (file.n === 2) {
+    specific = `Build FILE 2 — Worksheet Combined (.docx) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_WorksheetCombined.docx
+Syllabus: SEAB 2026 Pure Chemistry (6092) — Combined depth (no Pure-only content)
+
+STEP 0: Read /mnt/skills/public/docx/SKILL.md FIRST.
+
+LEARNING OUTCOMES (Combined scope only):
+${losText}
+
+SECTION A — 10 MCQ (10 marks): 7 recall + 3 application; ≥1 SG context; distractors targeting:
+${commonText}
+
+SECTION B — 3 Structured Questions (20 marks):
+  Q1 (7 marks): Core concept, scaffolded sub-parts
+  Q2 (7 marks): Cross-topic link + data table
+  Q3 (6 marks): Data/graph interpretation + deduction
+
+ANSWER LINES: paragraph border.bottom (w:pBdr) — NOT table cells.
+Table widths: columnWidths:[9360]. Page: US Letter, 1" margins. Font: Arial.
+Include Name/Class/Date row. State symbols in all equations.
+${isotoperule}
+Read SKILL.md first. Validate. PDF check. Share.`;
+  }
+  else if (file.n === 3) {
+    specific = `Build FILE 3 — Worksheet Pure (.docx) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_WorksheetPure.docx
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+Calibrated to: top-school Pure standard (SCGS/CGS/VS Prelim level)
+
+STEP 0: Read /mnt/skills/public/docx/SKILL.md FIRST.
+
+LEARNING OUTCOMES (full Pure scope):
+${losText}
+
+SECTION A — 10 MCQ (10 marks): ≥4 multi-step reasoning; ≥2 Pure-only content
+SECTION B — 3 Structured Questions (30 marks):
+  Q1 (10 marks): Core + Pure extension, "explain with reference to"
+  Q2 (10 marks): Data-based, cross-topic, novel context; state symbols required
+  Q3 (10 marks): Extended reasoning, ≥1 half-equation or calculation
+SECTION C — 1 Free-Response (10 marks):
+  JC-adjacent data provided; final sub-question unscaffolded (no guidance)
+  State symbols strictly required — marks deducted if missing
+
+Full model answers: "do not accept" phrases, mark allocation, common errors.
+${pureExt}
+${isotoperule}
+Read SKILL.md first. Validate. PDF check. Share.`;
+  }
+  else if (file.n === 4) {
+    specific = `Build FILE 4 — PowerPoint Slides (.pptx) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_Slides.pptx
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+STEP 0: Read /mnt/skills/public/pptx/SKILL.md FIRST.
+
+LEARNING OUTCOMES:
+${losText}
+
+SLIDE STRUCTURE:
+[1] Title slide — dark hero (#1A1535), logo, unit name, SEAB 2026
+[2] LO overview — list all outcomes
+[3–N] One slide per major concept — CHER method applied
+  - C slides: concept + Singapore analogy (from ${sgText.split('\n')[0]})
+  - H slides: keyword table ✓/✗
+  - E slides: worked example with marks shown
+  - R slides: recap bullets (3–5 max)
+Pure-only content: ⚗ badge (bg "7C6FAB", text white) on slide corner
+
+GRAPHS to generate with matplotlib first:
+${graphText}
+
+${colourConstants}
+${isotoperule}
+NEVER use # prefix on hex in PptxGenJS. NEVER reuse option objects. Fresh pptxgen() each run.
+Read SKILL.md first. Generate graphs first. Validate PDF. Share.`;
+  }
+  else if (file.n === 5) {
+    specific = `Build FILE 5 — Flashcard PPTX (.pptx) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_Flashcards.pptx
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+STEP 0: Read /mnt/skills/public/pptx/SKILL.md FIRST.
+
+20 CARDS (8 Definition · 6 Explain · 4 Equation · 2 Common Error):
+LEARNING OUTCOMES to cover:
+${losText}
+
+COMMONLY TESTED (prioritise these):
+${starredText}
+
+CARD FORMAT:
+- Front: question or term (dark bg #1A1535, white text, CHER pill)
+- Back: answer in mark scheme language (light bg, teal accent)
+- Pure-only cards: ⚗ badge (bg "7C6FAB")
+
+${colourConstants}
+${isotoperule}
+NEVER # prefix on hex. NEVER reuse option objects. Read SKILL.md first. Validate. Share.`;
+  }
+  else if (file.n === 6) {
+    specific = `Build FILE 6 — Interactive Quiz (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_Quiz.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+30-question pool, serve 10 (Fisher-Yates shuffle). Self-marking with mark scheme feedback.
+Gold standard reference: T3_AtomicStructure_Pure_Quiz.html
+
+LEARNING OUTCOMES:
+${losText}
+
+QUESTION MIX (30-pool):
+  10 × C (core concept MCQ) · 8 × H (keyword/definition MCQ)
+  8 × E (exam-style application/deduction) · 4 × R (common error spot)
+  ≥6 questions on Pure-only content · ≥4 Singapore context questions
+
+COMMONLY TESTED (flag ⭐ on high-frequency questions):
+${starredText}
+
+COMMON ERRORS (distractors):
+${commonText}
+
+TECHNICAL RULES:
+- Answers in data objects — NEVER hardcoded in onclick
+- Fisher-Yates shuffle on pool, serve 10
+- CSS variables only — no hardcoded hex
+- Pure hero gradient: #1A1535 → #2D1B4E
+- Pure accent: #7C6FAB
+- Show mark scheme explanation after each answer
+- Score screen with breakdown
+${isotoperule}
+Single self-contained HTML. No external JS. Mobile + desktop. Rocket LMS embed-ready.`;
+  }
+  else if (file.n === 7) {
+    specific = `Build FILE 7 — Flashcard Flipper (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_FlashcardFlipper.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+30-card pool, serve 20 (Fisher-Yates shuffle).
+Gold standard reference: T3_AtomicStructure_Pure_FlashcardFlipper.html
+
+LEARNING OUTCOMES:
+${losText}
+
+CARD MIX (30-pool):
+  8 × Definition cards · 6 × Explain/Apply cards
+  6 × Keyword completion · 4 × Equation/Formula · 3 × Error correction · 3 × Data-based
+
+FRONT: Term/question (CHER pill showing which step)
+BACK: Mark scheme answer with ✓ must-write phrases
+Pure-only cards: ⚗ badge (purple)
+
+TECHNICAL RULES:
+- cardEl.classList.remove('flipped') before content update on navigation
+- Fisher-Yates shuffle, serve 20
+- CSS variables only; hero gradient #1A1535 → #2D1B4E; accent #7C6FAB
+- Self-rating buttons: ✗ Again · ✓ Got it
+- Progress counter + score summary at end
+${isotoperule}
+Single self-contained HTML. No external JS. Mobile + desktop.`;
+  }
+  else if (file.n === 8) {
+    specific = `Build FILE 8 — Fill in the Blanks (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_FillBlanks.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+35-blank pool, serve 25 (Fisher-Yates shuffle).
+
+LEARNING OUTCOMES:
+${losText}
+
+BLANK TYPES (35-pool):
+  10 × single keyword (SEAB mark-earning word)
+  8 × short phrase (3–6 words, mark scheme language)
+  7 × equation completion (ionic/half-equation with state symbols)
+  Pure-only blanks: labelled ⚗ inline
+
+TARGET THESE WORDS:
+${starredText}
+
+COMMON ERRORS (wrong-word traps):
+${commonText}
+
+TECHNICAL RULES:
+- Fisher-Yates shuffle; serve 25
+- Answer checking: trim + case-insensitive; acceptable alternates array
+- CSS variables only; hero #1A1535 → #2D1B4E; accent #7C6FAB
+- Mark scheme reveal after each submission
+- Progress + score summary
+${isotoperule}
+Single self-contained HTML. No external JS. Mobile + desktop.`;
+  }
+  else if (file.n === 9) {
+    specific = `Build FILE 9 — Drag and Drop (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_DragDrop.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+4 CHER rounds, 6–8 pairs each.
+Gold standard reference: T3_AtomicStructure_Pure_DragDrop.html
+
+LEARNING OUTCOMES:
+${losText}
+
+ROUND STRUCTURE:
+  Round C: concept matching (term → definition)
+  Round H: keyword matching (SEAB phrase → what it means)
+  Round E: example matching (question type → correct answer phrase)
+  Round R: recap matching (fact → explanation)
+  ≥1 round focuses on Pure-only content
+
+PAIRS CONTENT (build from):
+${starredText}
+${commonText}
+
+TECHNICAL RULES:
+- Touch + mouse drag events (Rocket LMS tablet compatible)
+- Shuffle pairs per round; Fisher-Yates
+- CSS variables only; hero #1A1535 → #2D1B4E; accent #7C6FAB
+- Highlight correct (green) / incorrect (red) on drop
+- Round progress + overall score summary
+${isotoperule}
+Single self-contained HTML. No external JS. Mobile + desktop.`;
+  }
+  else if (file.n === 10) {
+    specific = `Build FILE 10 — Application Question Bank (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_AppBank.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+MINIMUM 15 QUESTIONS across 3 tiers:
+  5 × Foundation — data provided; single-step deduction
+  5 × Intermediate — 2–3 step reasoning from data table or graph
+  5 × Stretch — JC-adjacent data stimulus; final sub-question unscaffolded
+
+LEARNING OUTCOMES:
+${losText}
+
+EACH QUESTION STRUCTURE:
+  1. Stimulus (data table / graph / experimental description)
+  2. Scaffolded question parts (a)(b)(c)...
+  3. Mark scheme (SEAB language, "do not accept" phrases)
+  4. Cher's Tip (pattern recognition note)
+
+KEY HIGH-ORDER TYPES TO INCLUDE (where relevant to this unit):
+  → Data-based reasoning: "With reference to Table/Graph, explain why..."
+  → Deduction from novel context: "Suggest a reason for..."
+  → Cross-topic: link this unit's content to 1 other unit
+  ≥2 Singapore industrial context (Jurong Island, NEWater, Green Plan 2030)
+  ≥1 good-school prelim style question (SCGS/CGS/VS/NYGH standard)
+
+TECHNICAL RULES:
+  - 3 tier tabs: Foundation / Intermediate / Stretch
+  - Click question → expand → reveal mark scheme button
+  - CSS variables; hero #1A1535 → #2D1B4E; accent #7C6FAB
+  - Filter by tier; progress tracker (how many mark schemes viewed)
+${isotoperule}
+Single self-contained HTML. No external JS. Mobile + desktop.`;
+  }
+
+  return `${header}Build ONE file only this session:
+
+${specific}
+
+Deliver to /mnt/user-data/outputs/
+Validate before sharing. SEAB 2026 throughout — NEVER 2025.`;
+}
+
+// ═══════════════════════════════════════════════════════
+// CC PROMPT GENERATION
+// ═══════════════════════════════════════════════════════
+function generateCCPrompt(topic, ccFile) {
+  const header = buildPromptHeader(true);
+  const { losText, sgText, commonText, starredText } = buildTopicBlock(topic);
+  const unitSlug = topic.name.replace(/[^a-zA-Z0-9]+/g,'_');
+  const isotoperule = `ISOTOPE RULE: "same number of valence electrons" ALWAYS — NEVER "same electrons"`;
+  const ccVisual = `VISUAL: Dark header strip (#1A1535) + CC accent (#C05621) + progress counter.`;
+
+  let specific = '';
+
+  if (ccFile.n === 0) {
+    specific = `Build CC0 — Condensed Notes (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_CC0_CondensedNotes.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+2–3 PAGES MAXIMUM. Print-friendly (white background).
+PER CONCEPT: (1) SEAB-exact definition (2) Model answer mark scheme language (3) ✗ Never write → ✓ Write
+NO analogies. NO extended explanations.
+
+LEARNING OUTCOMES:
+${losText}
+
+GOLD STANDARD KEYWORDS (must appear):
+${starredText}
+
+COMMON MISCONCEPTIONS (drive error correction):
+${commonText}
+
+${ccVisual}
+${isotoperule}
+Single self-contained HTML. Must print as 2–3 page PDF from browser.
+Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026 · Unit ${topic.n}: ${topic.name} (Pure)"`;
+  }
+  else if (ccFile.n === 1) {
+    specific = `Build CC1 — Exam Cheat Sheet (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_CC1_CheatSheet.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+ONE PAGE ONLY. Zero prose. Designed for wall-pinning or screenshot.
+THREE-COLUMN TABLE:
+  Column 1: ✓ Must-Write Phrases (exact SEAB mark scheme)
+  Column 2: ✗ Never Say (exact wrong phrases)
+  Column 3: Formula/Equation (if applicable)
+
+MUST-WRITE (build from): ${starredText}
+NEVER-SAY (build from): ${commonText}
+SG CONTEXT (1–2 rows): ${sgText}
+
+${ccVisual}
+${isotoperule}
+White background. Print-optimised.
+Footer: "learnfromcher.com · CC Cheat Sheet · SEAB 2026 · Unit ${topic.n}: ${topic.name} (Pure)"`;
+  }
+  else if (ccFile.n === 2) {
+    specific = `Build CC2 — Answer Technique Guide (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_CC2_AnswerTechnique.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+4–5 most commonly examined question types for this unit.
+PER TYPE: (1) Command word (EXPLAIN/DESCRIBE/DEDUCE/STATE/SUGGEST)
+          (2) 3-element answer skeleton with blanks
+          (3) Filled example in SEAB mark scheme language
+Interactive: click blanks to reveal correct phrasing.
+
+QUESTION TYPES FROM LOs:
+${losText}
+SKELETON CONTENT FROM:
+${starredText}
+
+${ccVisual}
+${isotoperule}
+Single self-contained HTML. Mobile + desktop.
+Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026 · Unit ${topic.n}: ${topic.name} (Pure)"`;
+  }
+  else if (ccFile.n === 3) {
+    specific = `Build CC3 — Common Mistakes Drill (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_CC3_MistakesDrill.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+15 student-style written answers — mix correct and flawed. One at a time.
+Student marks ✅ or ❌. After each: examiner verdict + corrected phrasing revealed.
+NOT MCQ — pure written answer judgement.
+
+TARGET ERRORS:
+${commonText}
+
+EACH ITEM: Student answer → ✅/❌ buttons → Examiner verdict + correction
+RESULTS: Score X/15 + "review the ones you missed before the exam."
+
+${ccVisual}
+${isotoperule}
+Single self-contained HTML. Mobile + desktop.
+Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026 · Unit ${topic.n}: ${topic.name} (Pure)"`;
+  }
+  else if (ccFile.n === 4) {
+    specific = `Build CC4 — Rapid Fire Practice (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_CC4_RapidFire.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+20 short-answer phrase-completion questions. Timed: 30s per question.
+Student completes the correct phrase. Immediate mark scheme comparison.
+
+QUESTIONS FROM:
+${starredText}
+${losText}
+
+TIMER: Individual 30s countdown per question. Progress bar + "Q X of 20".
+Final: "X/20 phrases correct" message.
+
+${ccVisual}
+${isotoperule}
+Single self-contained HTML. Mobile + desktop.
+Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026 · Unit ${topic.n}: ${topic.name} (Pure)"`;
+  }
+  else if (ccFile.n === 5) {
+    specific = `Build CC5 — Daily End-of-Session Quiz (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_CC5_DailyQuiz.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+15 questions (5×C MCQ · 4×H fill-blank · 4×E MCQ · 2×R error-spot).
+Self-marking. Score shown prominently — students post in Zoom chat.
+Timer visible throughout.
+
+QUESTIONS FROM:
+${losText}
+
+SINGAPORE CONTEXT (≥2 questions):
+${sgText}
+
+FEEDBACK: After each → SEAB mark scheme phrase + ✓/✗
+RESULTS: Score circle "X/15" + CHER breakdown table
+  15/15:"Perfect! A1 Ready! 🎉" ≥12:"A1 Target! 🌟" ≥9:"B3 Range 👍" ≥6:"Getting There 📚" <6:"Revisit Notes 🔄"
+
+${ccVisual}
+${isotoperule}
+Single self-contained HTML. No external JS. Mobile + desktop.
+Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026 · Unit ${topic.n}: ${topic.name} (Pure)"`;
+  }
+  else if (ccFile.n === 6) {
+    specific = `Build CC6 — Mini Topic Final Exam (.html) for:
+Unit ${topic.n}: ${topic.name}
+Filename: U${topic.n}_${unitSlug}_Pure_CC6_MiniFinalExam.html
+Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+Format mirrors O-Level structure but for this unit only.
+Taken as a timed revision test (40 minutes).
+
+EXAM HEADER: learnfromcher.com | O-Level Chemistry | SEAB 2026
+Section A: 20 MCQ (20 marks) | Section B: 2 structured Qs (20 marks)
+Time: 40 minutes | Total: 40 marks
+
+SECTION A — 20 MCQ (self-marking, instant feedback):
+  Cover all LOs proportionally. ≥4 Pure-only Qs. ≥2 SG context.
+  Each Q: CHER tag + mark scheme explanation on reveal.
+
+SECTION B — 2 structured questions (20 marks):
+  Q1 (10 marks): Core concept + Pure extension; state symbols required
+  Q2 (10 marks): Data-based; novel context; final part unscaffolded
+  Mark scheme revealed after student confirms attempted.
+
+RESULTS: Score circle + traffic-light LO summary + "Book a consult" CTA.
+
+LEARNING OUTCOMES:
+${losText}
+
+${isotoperule}
+Single self-contained HTML. No external JS. Mobile + desktop.
+Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026 · Unit ${topic.n}: ${topic.name} (Pure)"`;
+  }
+
+  return `${header}Build ONE file only this session:\n\n${specific}\n\nDeliver to /mnt/user-data/outputs/\nSEAB 2026 throughout — NEVER 2025.`;
+}
+
+// ═══════════════════════════════════════════════════════
+// ASSESSMENT PROMPT GENERATION
+// ═══════════════════════════════════════════════════════
+function generateAssessPrompt(assess) {
+  const topicsS3 = TOPICS.filter(t=>t.n<=8).map(t=>`T${t.n}: ${t.name}`).join(', ');
+  const topicsAll = TOPICS.map(t=>`T${t.n}: ${t.name}`).join(', ');
+  const header = buildPromptHeader(true);
+
+  if (assess.type === 'diagnostic_s3') return `${header}Build S3 Pure Diagnostic Test (.html)
+Filename: S3_Pure_Diagnostic.html · Syllabus: SEAB 2026 Pure Chemistry (6092)
+Covers: ${topicsS3}
+
+~20 questions, ~35 minutes. Questions tagged by topic AND CHER step (C/H/E/R).
+STRUCTURE: Instructions screen → 15 MCQ + 5 short answer; each tagged: topic + CHER step
+RESULTS (two-phase):
+  Phase 1 — Immediate: Traffic-light by topic (Red/Amber/Green)
+  Phase 2 — Gated (Formspree form): Full CHER weakness report grid (topics × C/H/E/R)
+    PDPA-compliant consent checkbox. Leads to: "Book a consultation with Hannah"
+Single self-contained HTML. Mobile + desktop.
+Header: Dark gradient #1A1535→#2D1B4E + "learnfromcher.com — S3 Pure Diagnostic Test"
+Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026 · S3 Diagnostic"`;
+
+  if (assess.type === 'diagnostic_s4') return `${header}Build S4 Pure Diagnostic Test (.html)
+Filename: S4_Pure_Diagnostic.html · Syllabus: SEAB 2026 Pure Chemistry (6092)
+Covers: ${topicsAll}
+
+~28 questions, ~45 minutes. Questions tagged by topic AND CHER step.
+STRUCTURE: Instructions → 20 MCQ + 8 short answer; each tagged: topic + CHER step
+RESULTS (two-phase):
+  Phase 1 — Immediate: Traffic-light by topic (Red/Amber/Green)
+  Phase 2 — Gated (Formspree form): Full CHER weakness report grid. PDPA consent required.
+Single self-contained HTML. Mobile + desktop.
+Header: Dark gradient #1A1535→#2D1B4E + "learnfromcher.com — S4 Pure Diagnostic Test"
+Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026 · S4 Diagnostic"`;
+
+  if (assess.type === 'diag_results') return `${header}Build Diagnostic Results + Gated Form (.html)
+Filename: Pure_Diagnostic_Results_Form.html
+STRUCTURE:
+  1. Intro panel: "Your personalised CHER report is ready"
+  2. Formspree form: Name, Email, Level (S3/S4), WhatsApp (optional); PDPA consent (required)
+  3. On submit → Full CHER weakness grid:
+     Topics as rows (T1–T8 S3 / T1–T19 S4) × C/H/E/R columns
+     Traffic-light cells (Red=weak, Amber=partial, Green=strong)
+  4. CTA: "Book a free 20-min consultation with Hannah"
+Dark header gradient #1A1535→#2D1B4E + teal brand. Mobile + desktop.
+Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026"`;
+
+  if (assess.type === 'cc6_s3') return `${header}Build CC6 — S3 Pure Final Exam (.html)
+Filename: CC6_S3_Pure_FinalExam.html
+Covers: T1–T8 (${topicsS3}) · Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+EXAM HEADER: learnfromcher.com | O-Level Chemistry | SEAB 2026
+Section A: 20 MCQ (20 marks) | Section B: 3 structured Qs (20 marks)
+Time: 60 minutes | Total: 40 marks
+
+SECTION A — 20 MCQ self-marking. CHER-tagged. Topics T1–T8 proportionally.
+SECTION B — 3 structured Qs (20 marks):
+  Q1 (7m): Experimental Chemistry or KPT
+  Q2 (7m): Atomic Structure or Chemical Bonding
+  Q3 (6m): Cross-topic application
+  Mark scheme revealed after student confirms attempted.
+RESULTS: Score circle + traffic-light topic summary + PDPA gated CHER report.
+Single self-contained HTML. No external JS. Mobile + desktop.
+Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026 · S3 Final Exam"`;
+
+  if (assess.type === 'cc6_s4') return `${header}Build CC6 — S4 Pure Final Exam (.html)
+Filename: CC6_S4_Pure_FinalExam.html
+Covers: T1–T19 (${topicsAll}) · Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+EXAM HEADER: learnfromcher.com | O-Level Chemistry | SEAB 2026
+Section A: 30 MCQ (30 marks) | Section B: 3 structured Qs (30 marks)
+Time: 75 minutes | Total: 60 marks
+
+SECTION A — 30 MCQ self-marking. CHER-tagged. T1–T19 proportionally.
+≥4 data interpretation Qs; ≥4 SG context; ≥6 Pure-only content.
+SECTION B — 3 structured Qs:
+  Q1 (10m): Electrochemistry or Chemical Energetics (Pure-only)
+  Q2 (10m): Organic chemistry cross-topic
+  Q3 (10m): Industrial/environmental data-based application
+RESULTS: Score circle + CHER breakdown + PDPA gated full weakness report.
+Single self-contained HTML. No external JS. Mobile + desktop.
+Footer: "learnfromcher.com · O-Level Chemistry · SEAB 2026 · S4 Final Exam"`;
+
+  if (assess.type === 'ccref') return `${header}Build CC-REF — Pure Master Reference Pack (.html)
+Filename: Pure_MasterReference.html · Syllabus: SEAB 2026 Pure Chemistry (6092)
+
+Comprehensive single-file reference covering all 19 units. Jump-linked sections.
+Print-optimised white background.
+
+TABLES TO INCLUDE (minimum):
+  1. Electronic Configurations — Z=1 to 20
+  2. Common Ions and Charges
+  3. Solubility Rules — all common anions
+  4. Cation Tests — NaOH and NH₃ precipitate colours
+  5. Anion Tests — CO₃²⁻, Cl⁻, Br⁻ (cream/Pure), I⁻ (yellow/Pure), SO₄²⁻, NO₃⁻
+  6. Gas Tests — NH₃, CO₂, Cl₂, H₂, O₂, SO₂, HCl
+  7. Common Colours Table
+  8. Reagent Tests (Pure version — includes strong/weak acid comparison)
+  9. Organic Reactions + Conditions (Pure — includes hydration, esterification, condensation)
+  10. Organic Identification Tests
+  11. Organic Interconversion Flowchart (visual HTML diagram — Pure arrows included)
+  12. ⚗ Structural Isomers (Pure only)
+  13. ⚗ Periodic Trends Summary (Pure only)
+  14. ⚗ Energy Diagrams Summary (Pure only)
+  15. Reactivity Series (full, with extraction methods)
+  16. Significant Figures + Precision Rules
+
+CRITICAL RULES THROUGHOUT:
+✗ NEVER include ionisation energy · ✗ NEVER Le Chatelier's by name
+✗ NEVER Maxwell-Boltzmann · ✗ NEVER 22.4 dm³
+✓ State symbols in ALL equations · ✓ IUPAC groups 1–18 only
+⚗ Pure-only content clearly labelled throughout
+
+Footer (every print page): "learnfromcher.com · CC-REF Pure · SEAB 2026 Pure Chemistry"
+Single self-contained HTML. Jump-linked sections.`;
+
+  return '-- No prompt available for this assessment type --';
+}
+
+// ═══════════════════════════════════════════════════════
+// MODAL — WEEKLY
+// ═══════════════════════════════════════════════════════
+let currentTopic = null, currentFile = null, currentTab = 'prompt';
+let currentCCTopic = null, currentCCFile = null;
+
+function openModal(tn, fn) {
+  currentTopic = TOPICS.find(t=>t.n===tn);
+  currentFile  = FILES.find(f=>f.n===fn);
+  currentTab = 'prompt';
+  window._ccModalActive = false;
+  document.getElementById('modalTitle').textContent = `U${tn}: ${currentTopic.name} — File ${fn}: ${currentFile.label}`;
+  document.getElementById('modalSub').textContent = `${currentFile.ext||''} · ${currentFile.type.toUpperCase()} · SEAB 2026 · Pure Chemistry 6092`;
+  renderModalTabs(); renderModalBody(); renderStatusBtns(tn, fn);
+  document.getElementById('modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function renderModalTabs() {
+  const tabs = [
+    {id:'prompt',label:'📋 Build Prompt'},
+    {id:'los',label:'📚 LOs'},
+    {id:'sg',label:'🇸🇬 SG Context'},
+    {id:'tips',label:'⭐ Exam Tips'}
+  ];
+  document.getElementById('modalTabs').innerHTML = tabs.map(t=>
+    `<button class="modal-tab ${t.id===currentTab?'active':''}" onclick="switchTab('${t.id}')">${t.label}</button>`
+  ).join('');
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  renderModalTabs();
+  renderModalBody();
+}
+
+function renderModalBody() {
+  const body = document.getElementById('modalBody');
+  const t = window._ccModalActive ? currentCCTopic : currentTopic;
+  const f = currentFile;
+
+  if (currentTab === 'prompt') {
+    const prompt = window._ccModalActive
+      ? generateCCPrompt(currentCCTopic, currentCCFile)
+      : generatePrompt(currentTopic, currentFile);
+    body.innerHTML = `<div class="prompt-label">Ready-to-paste build prompt for Claude</div>
+      <div class="prompt-area"><div class="prompt-box" id="promptText">${escHtml(prompt)}</div></div>
+      <div class="info-panel info-c" style="margin-top:12px;">
+        <div class="lbl">💡 HOW TO USE</div>
+        <p>Start a <strong>fresh chat</strong>. Paste the Master Instructions (v2.3) first — or load the project in your workspace. Then paste this prompt. Build <strong>one file per session only</strong>.</p>
+      </div>`;
+    document.getElementById('copyBtn').style.display = 'flex';
+  } else if (currentTab === 'los') {
+    body.innerHTML = `<div class="section-hdr">Learning Outcomes — SEAB 2026 (verbatim)</div>
+      <div class="info-panel info-c"><div class="lbl">C — Concept coverage</div><ul>${t.los.map(lo=>`<li>${lo}</li>`).join('')}</ul></div>
+      <div class="section-hdr">Diagrams Required</div>
+      <div class="info-panel info-h"><div class="lbl">H — Placeholder boxes needed</div><ul>${t.diagrams.map(d=>`<li>${d}</li>`).join('')}</ul></div>
+      <div class="section-hdr">Graphs (matplotlib)</div>
+      <div class="info-panel info-e"><div class="lbl">E — Generate first</div><ul>${t.graphs.map(g=>`<li>${g}</li>`).join('')}</ul></div>`;
+    document.getElementById('copyBtn').style.display = 'none';
+  } else if (currentTab === 'sg') {
+    body.innerHTML = `<div class="section-hdr">Singapore Context</div>
+      <div class="info-panel info-c"><div class="lbl">🇸🇬 Use these in examples and question contexts</div><ul>${t.sg.map(s=>`<li>${s}</li>`).join('')}</ul></div>`;
+    document.getElementById('copyBtn').style.display = 'none';
+  } else if (currentTab === 'tips') {
+    body.innerHTML = `<div class="section-hdr">⭐ Commonly Tested (flag in all files)</div>
+      <div class="info-panel info-r"><div class="lbl">R — High-frequency exam content</div><ul>${t.starred.map(s=>`<li>${s}</li>`).join('')}</ul></div>
+      <div class="section-hdr">⚠ Common Misconceptions</div>
+      <div class="info-panel info-e"><div class="lbl">E — Target these in H panels and error cards</div><ul>${t.common.map(c=>`<li>${c}</li>`).join('')}</ul></div>
+      <div class="section-hdr">🔑 Isotope Keyword Rule</div>
+      <div class="info-panel info-h"><div class="lbl">H — Critical rule (all files)</div>
+        <p>Always state <strong>"same number of valence electrons"</strong> — NEVER "same electrons" or "same number of electrons".</p></div>`;
+    document.getElementById('copyBtn').style.display = 'none';
+  }
+}
+
+function renderStatusBtns(tn, fn) {
+  if (tn === 3) {
+    document.getElementById('statusBtns').innerHTML = `<span style="font-size:12px;color:var(--amber);font-weight:700;">⭐ Gold Standard — U3 locked</span>`;
+    return;
+  }
+  const status = getStatus(tn, fn);
+  document.getElementById('statusBtns').innerHTML = `
+    <span style="font-size:11px;color:var(--light);margin-right:4px;">Status:</span>
+    <button class="status-btn sb-not ${status==='not'?'active':''}" onclick="setStatus(${tn},${fn},'not')">○ Not Started</button>
+    <button class="status-btn sb-prog ${status==='prog'?'active':''}" onclick="setStatus(${tn},${fn},'prog')">◑ In Progress</button>
+    <button class="status-btn sb-done ${status==='done'?'active':''}" onclick="setStatus(${tn},${fn},'done')">✓ Done</button>`;
+}
+
+function updateModalStatusBtns(tn, fn) {
+  renderStatusBtns(tn, fn);
+  const cell = document.querySelector(`td[data-topic="${tn}"][data-file="${fn}"]`);
+  if (cell) {
+    const status = getStatus(tn, fn);
+    cell.className = `cell status-${status}`;
+    const labels = { not:'Not Started', prog:'In Progress', done:'Done ✓', gold:'Gold Standard ⭐' };
+    cell.querySelector('.cell-status').textContent = labels[status]||'—';
+    // Update ring
+    const topicRow = cell.closest('tr');
+    if (topicRow) {
+      const doneCount = FILES.filter(f=>{const s=getStatus(tn,f.n);return s==='done'||s==='gold';}).length;
+      const ringWrap = topicRow.querySelector('.progress-ring-wrap');
+      if (ringWrap) ringWrap.innerHTML = renderMiniRing(doneCount, FILES.length);
+      const txt = topicRow.querySelector('.topic-progress-text');
+      if (txt) txt.textContent = `${doneCount}/${FILES.length} files`;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// CC MODAL
+// ═══════════════════════════════════════════════════════
+function openCCModal(tn, fn) {
+  currentCCTopic = TOPICS.find(t=>t.n===tn);
+  currentCCFile  = CC_FILES.find(f=>f.n===fn);
+  currentTab = 'prompt';
+  window._ccModalActive = true;
+
+  document.getElementById('modalTitle').textContent = `U${tn}: ${currentCCTopic.name} — ${currentCCFile.label}`;
+  document.getElementById('modalSub').textContent = `${currentCCFile.short} · HTML · SEAB 2026 Pure Chemistry · Crash Course`;
+  document.getElementById('modalTabs').innerHTML = `
+    <button class="modal-tab active" onclick="switchCCTab('prompt')">📋 Build Prompt</button>
+    <button class="modal-tab" onclick="switchCCTab('sg')">🇸🇬 SG Context</button>
+    <button class="modal-tab" onclick="switchCCTab('tips')">⭐ Exam Tips</button>`;
+
+  renderCCModalBody('prompt');
+  const status = getCCStatus(tn, fn);
+  document.getElementById('statusBtns').innerHTML = `
+    <span style="font-size:11px;color:var(--light);margin-right:4px;">Status:</span>
+    <button class="status-btn sb-not ${status==='not'?'active':''}" onclick="setCCStatus(${tn},${fn},'not')">○ Not Started</button>
+    <button class="status-btn sb-prog ${status==='prog'?'active':''}" onclick="setCCStatus(${tn},${fn},'prog')">◑ In Progress</button>
+    <button class="status-btn sb-done ${status==='done'?'active':''}" onclick="setCCStatus(${tn},${fn},'done')">✓ Done</button>`;
+  document.getElementById('copyBtn').style.display = 'flex';
+  document.getElementById('modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function switchCCTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('#modalTabs .modal-tab').forEach((b,i)=>{
+    b.classList.toggle('active', (tab==='prompt'&&i===0)||(tab==='sg'&&i===1)||(tab==='tips'&&i===2));
+  });
+  renderCCModalBody(tab);
+}
+
+function renderCCModalBody(tab) {
+  const t = currentCCTopic;
+  const body = document.getElementById('modalBody');
+  if (tab === 'prompt') {
+    const prompt = generateCCPrompt(t, currentCCFile);
+    body.innerHTML = `<div class="prompt-label">Ready-to-paste build prompt for Claude</div>
+      <div class="prompt-area"><div class="prompt-box" id="promptText">${escHtml(prompt)}</div></div>
+      <div class="info-panel info-c" style="margin-top:12px;">
+        <div class="lbl">💡 HOW TO USE</div>
+        <p>Start a fresh chat. Paste Master Instructions v2.3 first. Then paste this prompt. One file per session.</p>
+      </div>`;
+    document.getElementById('copyBtn').style.display = 'flex';
+  } else if (tab === 'sg') {
+    body.innerHTML = `<div class="section-hdr">Singapore Context</div>
+      <div class="info-panel info-c"><div class="lbl">🇸🇬 Use these in examples</div><ul>${t.sg.map(s=>`<li>${s}</li>`).join('')}</ul></div>`;
+    document.getElementById('copyBtn').style.display = 'none';
+  } else if (tab === 'tips') {
+    body.innerHTML = `<div class="section-hdr">⭐ Commonly Tested</div>
+      <div class="info-panel info-r"><div class="lbl">R — High-frequency</div><ul>${t.starred.map(s=>`<li>${s}</li>`).join('')}</ul></div>
+      <div class="section-hdr">⚠ Common Misconceptions</div>
+      <div class="info-panel info-e"><div class="lbl">E — Target these</div><ul>${t.common.map(c=>`<li>${c}</li>`).join('')}</ul></div>`;
+    document.getElementById('copyBtn').style.display = 'none';
+  }
+}
+
+function updateCCModalStatusBtns(tn, fn) {
+  const status = getCCStatus(tn, fn);
+  document.getElementById('statusBtns').innerHTML = `
+    <span style="font-size:11px;color:var(--light);margin-right:4px;">Status:</span>
+    <button class="status-btn sb-not ${status==='not'?'active':''}" onclick="setCCStatus(${tn},${fn},'not')">○ Not Started</button>
+    <button class="status-btn sb-prog ${status==='prog'?'active':''}" onclick="setCCStatus(${tn},${fn},'prog')">◑ In Progress</button>
+    <button class="status-btn sb-done ${status==='done'?'active':''}" onclick="setCCStatus(${tn},${fn},'done')">✓ Done</button>`;
+  const cell = document.querySelector(`td[data-cctopic="${tn}"][data-ccfile="${fn}"]`);
+  if (cell) {
+    cell.className = `cell status-${status}`;
+    const labels = { not:'Not Started', prog:'In Progress', done:'Done ✓' };
+    cell.querySelector('.cell-status').textContent = labels[status]||'—';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// ASSESSMENT MODAL
+// ═══════════════════════════════════════════════════════
+function openAssessModal(assessId) {
+  const assess = ASSESSMENTS.find(a=>a.id===assessId);
+  window._ccModalActive = false;
+  document.getElementById('modalTitle').textContent = assess.label;
+  document.getElementById('modalSub').textContent = `HTML · SEAB 2026 Pure Chemistry · Crash Course Assessment`;
+  document.getElementById('modalTabs').innerHTML = `<button class="modal-tab active">📋 Build Prompt</button>`;
+  const prompt = generateAssessPrompt(assess);
+  document.getElementById('modalBody').innerHTML = `
+    <div class="prompt-label">Ready-to-paste build prompt for Claude</div>
+    <div class="prompt-area"><div class="prompt-box" id="promptText">${escHtml(prompt)}</div></div>
+    <div class="info-panel info-c" style="margin-top:12px;">
+      <div class="lbl">💡 HOW TO USE</div>
+      <p>Start a fresh chat. Paste Master Instructions v2.3 first. Then paste this prompt.</p>
+    </div>`;
+  const status = getAssessStatus(assessId);
+  document.getElementById('statusBtns').innerHTML = `
+    <span style="font-size:11px;color:var(--light);margin-right:4px;">Status:</span>
+    <button class="status-btn sb-not ${status==='not'?'active':''}" onclick="setAssessStatus('${assessId}','not')">○ Not Started</button>
+    <button class="status-btn sb-prog ${status==='prog'?'active':''}" onclick="setAssessStatus('${assessId}','prog')">◑ In Progress</button>
+    <button class="status-btn sb-done ${status==='done'?'active':''}" onclick="setAssessStatus('${assessId}','done')">✓ Done</button>`;
+  document.getElementById('copyBtn').style.display = 'flex';
+  document.getElementById('modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+// ═══════════════════════════════════════════════════════
+// MODAL CLOSE / COPY
+// ═══════════════════════════════════════════════════════
+function closeModal(e) { if (e.target.id==='modal') closeModalDirect(); }
+function closeModalDirect() {
+  document.getElementById('modal').style.display = 'none';
+  document.body.style.overflow = '';
+  window._ccModalActive = false;
+}
+
+function copyPrompt() {
+  const el = document.getElementById('promptText');
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = '📋 Copy Prompt'; btn.classList.remove('copied'); }, 2000);
+    showToast('✓ Prompt copied to clipboard');
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// BATCH GENERATOR — MODES A/B/C/D
+// ═══════════════════════════════════════════════════════
+let currentBatchMode = 'A';
+
+function toggleBatchPanel() {
+  const panel = document.getElementById('batchPanel');
+  const btn = document.getElementById('batchToggleBtn');
+  const open = panel.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  if (open) initBatchSelects();
+}
+
+function setBatchMode(mode) {
+  currentBatchMode = mode;
+  ['A','B','C','D'].forEach(m => {
+    document.getElementById(`mode${m}`).classList.toggle('active', m===mode);
+    document.getElementById(`panel${m}`).classList.toggle('active', m===mode);
+  });
+  document.getElementById('batchResults').innerHTML = '';
+  document.getElementById('batchWarn').classList.remove('show');
+}
+
+function initBatchSelects() {
+  const unitOptions = TOPICS.map(t => `<option value="${t.n}">U${t.n}: ${t.name}</option>`).join('');
+  const noneOption = `<option value="">— None —</option>`;
+  const fileOptions = FILES.map(f => `<option value="${f.n}">F${f.n}: ${f.label} (${f.type.toUpperCase()})</option>`).join('');
+
+  // Mode A
+  document.getElementById('batchFileSelectA').innerHTML = fileOptions;
+  ['batchUnitA1','batchUnitA2','batchUnitA3'].forEach((id,i) => {
+    document.getElementById(id).innerHTML = (i===0?'':noneOption) + unitOptions;
+    if (i===0) document.getElementById(id).value = '1';
+    if (i===1) { document.getElementById(id).value = ''; }
+    if (i===2) { document.getElementById(id).value = ''; }
+  });
+
+  // Mode B + C
+  ['batchUnitB','batchUnitC'].forEach(id => { document.getElementById(id).innerHTML = unitOptions; document.getElementById(id).value = '1'; });
+
+  // Mode D
+  ['batchUnitD1','batchUnitD2','batchUnitD3'].forEach((id,i) => {
+    document.getElementById(id).innerHTML = (i===0?'':noneOption) + unitOptions;
+    if (i===0) document.getElementById(id).value = '1';
+    else document.getElementById(id).value = '';
+  });
+}
+
+function showWarn(msg) {
+  const w = document.getElementById('batchWarn');
+  w.textContent = '⚠ ' + msg;
+  w.classList.add('show');
+}
+function hideWarn() { document.getElementById('batchWarn').classList.remove('show'); }
+
+function generateBatchA() {
+  hideWarn();
+  const fn  = parseInt(document.getElementById('batchFileSelectA').value);
+  const u1  = parseInt(document.getElementById('batchUnitA1').value);
+  const u2v = document.getElementById('batchUnitA2').value;
+  const u3v = document.getElementById('batchUnitA3').value;
+  const units = [u1];
+  if (u2v) units.push(parseInt(u2v));
+  if (u3v) units.push(parseInt(u3v));
+
+  // Validate: no duplicate units
+  if (new Set(units).size !== units.length) { showWarn('Duplicate units selected — each unit must be different.'); return; }
+  if (units.length > 3) { showWarn('Mode A: maximum 3 units per session.'); return; }
+
+  const file = FILES.find(f=>f.n===fn);
+  const items = units.map(tn => {
+    const topic = TOPICS.find(t=>t.n===tn);
+    return { label:`Session ${units.indexOf(tn)+1}/${units.length}: F${fn} · U${tn}: ${topic.name}`, unitLabel:`U${tn} ${topic.name}`, prompt: generatePrompt(topic, file) };
+  });
+  renderBatchResults(items, `Mode A: F${fn} (${file.label}) — ${units.length} unit${units.length>1?'s':''}`);
+}
+
+function generateBatchB() {
+  hideWarn();
+  const tn = parseInt(document.getElementById('batchUnitB').value);
+  const topic = TOPICS.find(t=>t.n===tn);
+  const htmlFiles = [7,8,9].map(fn => FILES.find(f=>f.n===fn));
+  const items = htmlFiles.map((file,i) => ({
+    label: `Session ${i+1}/3: F${file.n} ${file.label} · U${tn}`,
+    unitLabel: `U${tn}: ${topic.name}`,
+    prompt: generatePrompt(topic, file)
+  }));
+  renderBatchResults(items, `Mode B: F7+F8+F9 Interactive Trio — U${tn}: ${topic.name}`);
+}
+
+function generateBatchC() {
+  hideWarn();
+  const tn = parseInt(document.getElementById('batchUnitC').value);
+  const topic = TOPICS.find(t=>t.n===tn);
+  const ccTriple = [0,1,2].map(cn => CC_FILES.find(f=>f.n===cn));
+  const items = ccTriple.map((ccFile,i) => ({
+    label: `Session ${i+1}/3: ${ccFile.short} · U${tn}`,
+    unitLabel: `U${tn}: ${topic.name}`,
+    prompt: generateCCPrompt(topic, ccFile)
+  }));
+  renderBatchResults(items, `Mode C: CC0+CC1+CC2 Trio — U${tn}: ${topic.name}`);
+}
+
+function generateBatchD() {
+  hideWarn();
+  const u1  = parseInt(document.getElementById('batchUnitD1').value);
+  const u2v = document.getElementById('batchUnitD2').value;
+  const u3v = document.getElementById('batchUnitD3').value;
+  const units = [u1];
+  if (u2v) units.push(parseInt(u2v));
+  if (u3v) units.push(parseInt(u3v));
+  if (new Set(units).size !== units.length) { showWarn('Duplicate units selected — each unit must be different.'); return; }
+  if (units.length > 3) { showWarn('Mode D: maximum 3 units per session.'); return; }
+
+  const f10 = FILES.find(f=>f.n===10);
+  const items = units.map(tn => {
+    const topic = TOPICS.find(t=>t.n===tn);
+    return { label:`Session ${units.indexOf(tn)+1}/${units.length}: F10 App Bank · U${tn}`, unitLabel:`U${tn}: ${topic.name}`, prompt: generatePrompt(topic, f10) };
+  });
+  renderBatchResults(items, `Mode D: F10 Application Bank — ${units.length} unit${units.length>1?'s':''}`);
+}
+
+function renderBatchResults(items, title) {
+  const results = document.getElementById('batchResults');
+
+  // Build combined prompt
+  const combined = items.map((item,i) =>
+    `${'═'.repeat(60)}\nFILE ${i+1} OF ${items.length}: ${item.label}\n${'═'.repeat(60)}\n\n${item.prompt}`
+  ).join('\n\n');
+
+  results.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+      <div style="font-size:12px;font-weight:700;color:var(--mid);">${title} · ${items.length} file${items.length>1?'s':''}</div>
+      <button class="batch-generate-btn" id="copyAllBtn" onclick="copyAllPrompts()" style="font-size:12px;padding:7px 16px;">
+        📋 Copy All ${items.length > 1 ? items.length + ' prompts' : 'prompt'} as 1 message
+      </button>
+    </div>
+    <div class="info-panel info-h" style="margin-bottom:10px;padding:9px 12px;">
+      <div class="lbl" style="margin-bottom:3px;">💡 HOW TO USE THE COMBINED PROMPT</div>
+      <p>Paste the combined prompt into one fresh chat. Claude will build each file sequentially, validating before moving to the next. This respects the 3-file session rule — same file type per session.</p>
+    </div>` +
+    items.map((item,i) => `
+    <div class="batch-item">
+      <div class="batch-item-hdr">
+        <div><div class="bi-label">${item.label}</div><div class="bi-unit">${item.unitLabel}</div></div>
+        <button class="batch-copy-btn" onclick="copyBatchPromptEl(${i})">📋 Copy this one</button>
+      </div>
+      <div class="batch-prompt-preview">${escHtml(item.prompt.substring(0,280))}...</div>
+    </div>`).join('');
+
+  window._batchPrompts = items.map(i=>i.prompt);
+  window._batchCombined = combined;
+}
+
+function copyAllPrompts() {
+  if (!window._batchCombined) return;
+  navigator.clipboard.writeText(window._batchCombined).then(() => {
+    const btn = document.getElementById('copyAllBtn');
+    if (btn) { btn.textContent = '✅ Copied!'; setTimeout(()=>{ btn.textContent = `📋 Copy All as 1 message`; }, 2200); }
+    showToast('✓ All prompts combined and copied');
+  });
+}
+
+function copyBatchPromptEl(i) {
+  const prompt = window._batchPrompts[i];
+  if (!prompt) return;
+  navigator.clipboard.writeText(prompt).then(() => {
+    const btns = document.querySelectorAll('.batch-copy-btn');
+    // find the right button
+    let clicked = null;
+    document.querySelectorAll('.batch-item').forEach((item,idx) => {
+      if (idx===i) clicked = item.querySelector('.batch-copy-btn');
+    });
+    if (clicked) { clicked.textContent='✅ Copied!'; clicked.classList.add('copied'); setTimeout(()=>{clicked.textContent='📋 Copy';clicked.classList.remove('copied');},2000); }
+    showToast(`✓ Session ${i+1} prompt copied`);
+  });
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<span class="t-icon">✓</span>${msg}`;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function confirmReset() {
+  const label = currentMainTab === 'weekly' ? 'Weekly Tuition' : 'Crash Course';
+  if (confirm(`Reset ALL ${label} statuses to Not Started?\n(U3 Atomic Structure gold standard will be preserved.)`)) {
+    if (currentMainTab === 'weekly') {
+      state = {};
+      for (const f of FILES) state[`3_${f.n}`] = 'gold'; // re-lock U3
+      saveState(); renderGrid();
+    } else {
+      ccState = {};
+      saveCCState(); renderCCGrid(); renderAssessments();
+    }
+    updateStats();
+    showToast('↺ All statuses reset');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// LOGO GUIDE
+// ═══════════════════════════════════════════════════════
+function openLogoGuide() {
+  document.getElementById('logoModalBody').innerHTML = `
+  <div class="info-panel info-c" style="margin-bottom:14px;">
+    <div class="lbl">📋 OVERVIEW</div>
+    <p>Your current logo is a text fallback. Once you have your hi-res PNG from your designer, follow the steps below to update it across all files.</p>
+  </div>
+  <div class="section-hdr">Step 1 — Prepare your PNG</div>
+  <div class="step-block"><div class="step-num">1</div><div class="step-content">
+    <strong>Request these specs from your designer</strong>
+    <p>PNG-24, transparent background · White version (for dark headers #1A1535) · Teal version (#1A7A8A) for light backgrounds · Min height: 80px · Recommended: 800×200px at 2× scale</p>
+    <p>Files: <code>learnfromcher_logo_white.png</code> + <code>learnfromcher_logo_teal.png</code></p>
+  </div></div>
+  <div class="section-hdr">Step 2 — Update this Dashboard</div>
+  <div class="step-block"><div class="step-num">2</div><div class="step-content">
+    <strong>In learnfromcher_dashboard_pure_v4.html — find the header section</strong>
+    <div class="code-block">Find: &lt;span class="lp"&gt;learnfrom&lt;/span&gt;...
+Replace with: &lt;img src="learnfromcher_logo_white.png" alt="learnfromcher.com" style="height:32px;width:auto;"&gt;</div>
+    <div class="warn-box"><strong>⚠ Delete the text spans entirely</strong> — don't leave both the img and spans.</div>
+  </div></div>
+  <div class="section-hdr">Step 3 — Update HTML Interactive Files (F0, F6–F10)</div>
+  <div class="step-block"><div class="step-num">3</div><div class="step-content">
+    <strong>Search each file for the logo pattern and replace</strong>
+    <div class="code-block">Search for: learnfrom&lt;/span&gt;
+Replace logo wrapper content with: &lt;img src="learnfromcher_logo_white.png" alt="learnfromcher.com" style="height:30px;width:auto;"&gt;</div>
+    <div class="note-box">💡 Place the PNG in the same folder as each HTML file, or use the full LMS URL.</div>
+  </div></div>
+  <div class="section-hdr">Step 4 — Update PPTX Build Scripts (F4, F5)</div>
+  <div class="step-block"><div class="step-num">4</div><div class="step-content">
+    <strong>In each PptxGenJS build script</strong>
+    <div class="code-block">// Replace addText logo with:
+slide.addImage({ path:"learnfromcher_logo_white.png", x:0.3, y:0.1, w:1.8, h:0.42 });
+// Use _teal.png for slides with white/light backgrounds</div>
+    <div class="warn-box"><strong>⚠ PptxGenJS image path is relative to where you run the node script.</strong></div>
+  </div></div>`;
+  document.getElementById('logoModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeLogoGuide() {
+  document.getElementById('logoModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+loadState();
+renderGrid();
+updateStats();
+// Pre-render CC grid structure
+renderCCGrid();
+renderAssessments();
+document.getElementById('ccTabContent').style.display = 'none';
+</script>
+</body>
+</html>
