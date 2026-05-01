@@ -229,6 +229,13 @@ td.cell.skip{background:repeating-linear-gradient(-45deg,#F0F4F8,#F0F4F8 4px,#E8
   .modal-hdr{border-radius:12px 12px 0 0;padding:14px 18px;}
   .batch-controls{flex-direction:column;}
   .batch-select{min-width:100%;}
+  /* v6 fix: on mobile, sticky col-hdr stacks under the page header and clips
+     the first topic row's name. Drop col-hdr sticky on phones — icons in each
+     cell already convey the file type, so the column header isn't needed pinned. */
+  .col-hdr{position:static!important;top:auto!important;}
+  /* Make sure topic-hdr cells aren't clipped under the page hdr if the user
+     uses anchor scroll — give some scroll-margin for safety. */
+  .topic-hdr{scroll-margin-top:70px;}
 }
 
 /* ── TAB TOGGLE ── */
