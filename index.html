@@ -109,6 +109,8 @@ body{font-family:'DM Sans',sans-serif;background:#F0F4F8;color:var(--dark);min-h
 .topic-gold{background:linear-gradient(90deg,#FFFBEB,#fff) !important;}
 .gold-star{font-size:13px;margin-left:4px;}
 .topic-progress{font-size:10px;color:var(--light);font-family:'DM Mono',monospace;margin-top:3px;padding-left:30px;}
+.bundle-btn{display:inline-block;margin-top:6px;margin-left:30px;background:linear-gradient(135deg,#7C6FAB,#553C9A);color:#fff;border:none;border-radius:6px;padding:5px 10px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.2px;transition:all .15s;box-shadow:0 1px 3px rgba(85,60,154,.25);}
+.bundle-btn:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(85,60,154,.4);}
 
 /* ── CELL ── */
 td.cell{padding:4px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);vertical-align:middle;}
@@ -1269,6 +1271,184 @@ function topicHtmlForUnit(n) {
 }
 
 // ════════════════════════════════════════════════════════
+// HTML BUNDLE PROMPT GENERATION (F6 + F7 + F8 same-unit, one chat)
+// ════════════════════════════════════════════════════════
+function generateBundlePrompt(topic) {
+  const un = `U${topic.n}`;
+  const unitSlug = topic.name.replace(/[^a-zA-Z0-9]+/g,'_');
+  const losText = topic.los.map((lo,i) => `  ${i+1}. ${lo}`).join('\n');
+  const sgText = topic.sg.map(s => `  - ${s}`).join('\n');
+  const commonText = topic.common.map(c => `  ⚠ ${c}`).join('\n');
+  const starredText = topic.starred.map(s => `  ⭐ ${s}`).join('\n');
+  const f1path = topicHtmlForUnit(topic.n);
+
+  return `learnfromcher.com — Pure Chemistry HTML Bundle build · SEAB 2026 (6092)
+
+══════════════════════════════════════════════════════════════════
+TRACK B BUNDLE · BUILD F6 + F7 + F8 for ${un} — ${topic.name}
+ALL THREE FILES IN THIS ONE CHAT.
+══════════════════════════════════════════════════════════════════
+
+PREFLIGHT (every session, no exceptions):
+  1. Read /mnt/project/_PREFLIGHT_MANDATORY_3.md — complete checks 1-3, present answers in your first reply.
+  2. Read /mnt/project/PURE_PROJECT_INSTRUCTIONS_v2_8.txt §0 (workflow) + §6A (HTML rules).
+  3. Read /mnt/project/PURE_COMPONENT_LIBRARY.html — COPY components VERBATIM.
+     Do NOT reinterpret structure, invent CSS classes, or rebuild components from
+     descriptions. Use the library's exact HTML/CSS for: sticky header, hero gradient,
+     CHER pills, C/H/E/R panels, .app-box, .pure-box, .warn-box, .sg-box, .eq-row,
+     .table-wrap, summary-table, footer. If a component you need is missing from the
+     library, STOP and tell Hannah — do not improvise.
+  4. Read the F1 for this unit — chemistry source of truth — IN FULL:
+       /mnt/project/${f1path}
+     All three derivative files (F6, F7, F8) inherit chemistry, examples, SG context,
+     and depth from this F1. Never go deeper than F1; never go shallower.
+  5. Notion Content Rule List — fetch any rule edited in past 7 days.
+       DB: 2faa1b19-8230-4dc0-9648-3d6ba195c8a6
+       DS: f3b31ba2-ac45-41a3-bafc-a67725d5bacf
+
+UNIT: ${un} — ${topic.name}
+
+LEARNING OUTCOMES (verbatim from syllabus):
+${losText}
+
+SINGAPORE CONTEXT (use across all 3 files where natural):
+${sgText}
+
+⭐ COMMONLY TESTED:
+${starredText}
+
+COMMON MISCONCEPTIONS (drive distractors, ✗ keyword cards, error pairs):
+${commonText}
+
+══════════════════════════════════════════════════════════════════
+BUILD ORDER & SHARED CONTEXT
+══════════════════════════════════════════════════════════════════
+Build the three files in this order. Each one inherits from F1 and from the previous
+build's content pool — DO NOT regenerate question content from scratch for each file.
+Use a shared content pool extracted from F1 once, then format three different ways:
+
+  POOL 1: ~30 concept Q&A pairs (for F6 stems, F7 fronts, F8 cloze sentences)
+  POOL 2: ~12 keyword discrimination items (✓ vs ✗) (drives F6 H-tagged, F7 H, F8 H)
+  POOL 3: ~8 worked-example one-liners (F6 E, F7 E, F8 E)
+  POOL 4: ~6 commonly-tested ⭐ items (F6 R, F7 R, F8 R)
+
+══════════════════════════════════════════════════════════════════
+FILE 1 of 3 — F6 Interactive Quiz
+══════════════════════════════════════════════════════════════════
+Output: ${un}_${unitSlug}_Pure_F6_Quiz.html
+Gold standard: /mnt/project/T3_AtomicStructure_Combined_Quiz.html
+  Mirror DOM and CSS exactly. Adapt content to Pure depth.
+
+QUIZ SPEC:
+  Pool: 30 MCQ. Serve: 10 randomised per attempt (Fisher-Yates).
+  CHER mix:
+    3 × C (core concept recall)
+    3 × H (keyword discrimination — distractors built from common errors above)
+    2 × E (application / data interpretation)
+    2 × R (misconception spot)
+  Each Q: 4 options, single correct, immediate feedback, mark scheme phrase + Cher's tip.
+  Score screen: large circle X/10, CHER breakdown table, screenshot prompt.
+  Score messages:
+    10/10: "Perfect — A1 ready! 🎉"
+    ≥8: "Excellent — A1 target 🌟"
+    ≥6: "Good — B3 range 👍"
+    ≥4: "Getting there 📚"
+    <4: "Revisit notes 🔄"
+
+INTERACTIVE FILE RULES (CRITICAL):
+  • Answers stored in data objects ONLY — never hardcoded in onclick attributes.
+  • Fisher-Yates for question and option shuffle.
+  • Single full innerHTML rebuild per Q advance — no incremental DOM patching.
+  • Mobile + desktop responsive. Sticky header. Hero screen with Start button.
+
+══════════════════════════════════════════════════════════════════
+FILE 2 of 3 — F7 Flashcard Flipper
+══════════════════════════════════════════════════════════════════
+Output: ${un}_${unitSlug}_Pure_F7_FlashcardFlipper.html
+Gold standard: /mnt/project/T3_AtomicStructure_Combined_FlashcardFlipper.html
+
+FLIPPER SPEC:
+  Pool: 30 cards. Serve: 20 randomised (Fisher-Yates).
+  CHER mix:
+    8 × C (definitions, core concepts)
+    6 × H (keywords — front: stem; back: ✓ write / ✗ never)
+    4 × E (worked-example one-liner)
+    2 × R (commonly tested ⭐)
+  Card layout: Front = term/question; Back = SEAB mark scheme phrase + CHER tag.
+  Tap or click anywhere on card to flip.
+  Prev/Next + progress dots + "Mark as Mastered" toggle per card.
+  End screen: cards mastered count + "Restart" button.
+
+CRITICAL FIX:
+  cardEl.classList.remove('flipped') MUST be called BEFORE updating content
+  on every Prev/Next nav. Prevents answer bleed across cards.
+
+══════════════════════════════════════════════════════════════════
+FILE 3 of 3 — F8 Fill in the Blanks
+══════════════════════════════════════════════════════════════════
+Output: ${un}_${unitSlug}_Pure_F8_FillBlanks.html
+Gold standard: /mnt/project/T3_AtomicStructure_Combined_FillBlanks.html
+
+FILL-BLANKS SPEC:
+  Pool: 35 sentences. Serve: 25 randomised (Fisher-Yates).
+  Each sentence: 1–3 blanks. Student types; instant ✓/✗ per blank.
+  Accept synonyms via array of acceptable answers.
+  CHER mix:
+    8 × C  (concept completion)
+    8 × H  (keyword completion — discriminates ✓ vs ✗ phrasing)
+    5 × E  (equation/data fill)
+    4 × R  (commonly tested ⭐)
+  End screen: score X/25 · CHER breakdown · "Review wrong answers" button.
+
+ANSWER ARRAY PATTERN (per blank):
+  { id:1, sentence:"Isotopes have the same ___ number but different ___ number.",
+    answers:[["proton","atomic"], ["nucleon","mass"]],
+    cher:"C", tip:"SEAB accepts both proton/atomic and nucleon/mass." }
+
+══════════════════════════════════════════════════════════════════
+CRITICAL RULES — apply to ALL THREE files
+══════════════════════════════════════════════════════════════════
+- Footer (each file): "learnfromcher.com · O-Level Chemistry · SEAB 2026 · Unit ${topic.n}: ${topic.name} (Pure)"
+  NEVER "O-Level Science (Chemistry)" in any Pure file.
+- SEAB 2026 throughout. Never 2025/2027.
+- Isotopes: ALWAYS "same number of valence electrons". NEVER "same electrons".
+- Molar volume: 24 dm³ at RTP. NEVER 22.4 dm³.
+- Aqueous ammonia: NH₃(aq). NEVER NH₄OH.
+- Limewater: "white precipitate formed". NEVER "turns milky".
+- Bromine water: "decolourised". NEVER "turns colourless".
+- IUPAC group numbers 1–18 ONLY.
+- All numerical answers 3 s.f.
+- NEVER name a Singapore school. NEVER "top-school"/"top-tier"/"elite".
+- NEVER "molecular equation". Always "chemical equation".
+- NEVER "polar / non-polar" in student files.
+
+BRAND TOKENS (CSS variables only — no hardcoded hex outside :root):
+:root {
+  --teal:#1A7A8A; --teal-dk:#0F5A67; --teal-md:#2A9BAD; --teal-lt:#EBF6F8;
+  --dark:#1A2E35; --mid:#4A5568; --light:#718096; --off:#F7FAFC; --white:#fff; --border:#CBD5E0;
+  --cher-c:#1A7A8A; --cher-h:#7C6FAB; --cher-e:#F48FB1; --cher-e-dk:#C2185B;
+  --cher-r:#FDE68A; --cher-r-dk:#92400E;
+  --green:#276749; --red:#C53030; --pure:#7C6FAB;
+}
+Logo (header + footer):
+  <span style="color:#1A7A8A;">learnfrom</span><span style="color:#E8604C;font-size:20px;">Cher</span><span style="color:#1A7A8A;">.com</span>
+
+══════════════════════════════════════════════════════════════════
+DELIVERY
+══════════════════════════════════════════════════════════════════
+Three .html files to /mnt/user-data/outputs/. Build sequentially in this chat.
+After each file: brief 2–3 line summary of what was built (counts, CHER mix).
+After all three: a final consolidated summary table.
+
+Pre-delivery grep gate (run silently per file before sharing):
+  grep -ciE "22\\.4 *dm|NH₄OH|turns milky|same electrons|maxwell.?boltzmann" $OUT.html  # 0
+  grep -ciE "molecular equation|polar.non.polar|elite|top.school|top.tier" $OUT.html      # 0
+  grep -c "SEAB 2026" $OUT.html                                                           # ≥1
+  grep -c "O-Level Chemistry" $OUT.html                                                   # ≥1
+  grep -c "O-Level Science (Chemistry)" $OUT.html                                         # 0`;
+}
+
+// ════════════════════════════════════════════════════════
 // CC PROMPT GENERATION
 // ════════════════════════════════════════════════════════
 function generateCCPrompt(topic, ccFile) {
@@ -1928,10 +2108,18 @@ function renderGrid() {
     const topicTotal = FILES.length;
 
     const tr = document.createElement('tr');
-    // Topic cell
+    // Topic cell + bundle button
+    const allHtmlBundleDone = [6,7,8].every(fn => {
+      const s = getStatus(topic.n, fn);
+      return s === 'done' || s === 'gold';
+    });
+    const bundleBtn = isGold || allHtmlBundleDone
+      ? ''
+      : `<button class="bundle-btn" onclick="openBundleModal(${topic.n})" title="Generate ONE prompt that builds F6 Quiz + F7 Flipper + F8 Fill-Blanks for U${topic.n} in a single chat">📦 Bundle F6+F7+F8</button>`;
     tr.innerHTML = `<td class="topic-hdr ${isGold?'topic-gold':''}">
       <span class="topic-num">${topic.n}</span>${topic.name}${isGold?'<span class="gold-star">⭐</span>':''}
       <div class="topic-progress">${topicDone}/${topicTotal} files complete</div>
+      ${bundleBtn}
     </td>`;
 
     for (const file of FILES) {
@@ -2091,6 +2279,9 @@ function openModal(topicN, fileN) {
   document.getElementById('modalTitle').textContent = `T${topicN}: ${currentTopic.name} — File ${fileN}: ${currentFile.label}`;
   document.getElementById('modalSub').textContent = `${currentFile.ext || ''} · ${currentFile.type.toUpperCase()} · SEAB 2026 · Pure Chemistry (6092)`;
 
+  // Restore status buttons (in case a bundle modal hid them)
+  document.getElementById('statusBtns').style.display = '';
+
   renderModalTabs();
   renderModalBody();
   renderStatusBtns(topicN, fileN);
@@ -2223,6 +2414,9 @@ function openCCModal(topicN, fileN) {
   document.getElementById('modalSub').textContent =
     `${currentCCFile.short} · HTML · SEAB 2026 Pure Chemistry · Crash Course`;
 
+  // Restore status buttons (in case a bundle modal hid them)
+  document.getElementById('statusBtns').style.display = '';
+
   // Modal tabs — just prompt for CC
   document.getElementById('modalTabs').innerHTML = `
     <button class="modal-tab active">📋 Build Prompt</button>
@@ -2321,6 +2515,38 @@ function copyPrompt() {
     showToast('✅ Prompt copied to clipboard');
     setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='📋 Copy Prompt';},2000);
   });
+}
+
+// Bundle modal — F6+F7+F8 same-unit, single chat
+function openBundleModal(topicN) {
+  const topic = TOPICS.find(t=>t.n===topicN);
+  if (!topic) return;
+  currentTopic = topic;
+  currentFile = null;
+  currentTab = 'prompt';
+
+  document.getElementById('modalTitle').textContent = `📦 BUNDLE — U${topicN}: ${topic.name} — F6 Quiz + F7 Flipper + F8 Fill-Blanks`;
+  document.getElementById('modalSub').textContent = `3 HTML files · ONE chat · Pure Chemistry (6092) · SEAB 2026`;
+
+  // Hide tabs (bundle has only the prompt view)
+  document.getElementById('modalTabs').innerHTML = `<div style="font-size:12px;color:var(--cher-h-dk);font-weight:700;padding:8px 0;">📦 SAME-UNIT HTML BUNDLE — paste this ONE prompt into ONE fresh chat. Claude builds all three files in sequence.</div>`;
+
+  const prompt = generateBundlePrompt(topic);
+  document.getElementById('modalBody').innerHTML = `<div class="prompt-label">Ready-to-paste bundle prompt — builds F6, F7, F8 for U${topicN} in one chat</div>
+    <div class="prompt-area">
+      <div class="prompt-box" id="promptText">${escHtml(prompt)}</div>
+    </div>
+    <div class="info-panel" style="margin-top:14px;background:#FAF5FF;border-left:4px solid #7C6FAB;">
+      <div class="lbl" style="color:#553C9A;">📦 HOW BUNDLES WORK</div>
+      <p>This single prompt builds <strong>F6 Quiz</strong>, <strong>F7 Flipper</strong>, and <strong>F8 Fill-Blanks</strong> for U${topicN} sequentially in one chat. They share F1 as the chemistry source, so building them together (vs three separate chats) saves ~80% of setup overhead and keeps content perfectly consistent across the three files. After Claude finishes, mark each cell Done individually in the dashboard.</p>
+    </div>`;
+
+  // Hide status buttons (bundle covers 3 files; mark each individually after build)
+  document.getElementById('statusBtns').style.display = 'none';
+  document.getElementById('copyBtn').style.display = 'flex';
+
+  document.getElementById('modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
 
 function closeModal(e) {
@@ -2547,9 +2773,13 @@ function initBatchPanel() {
   function populateFiles() {
     const tab = tabSelect.value;
     const files = tab === 'weekly' ? FILES : CC_FILES;
-    fileSelect.innerHTML = files.map(f =>
-      `<option value="${f.n}">${f.icon} ${f.label} (${f.short})</option>`
-    ).join('');
+    fileSelect.innerHTML = files.map(f => {
+      const isF1 = tab === 'weekly' && f.n === 1;
+      const label = isF1
+        ? `${f.icon} ${f.label} (${f.short}) ⚠ GOLD-LOCKED — rebuild only if needed`
+        : `${f.icon} ${f.label} (${f.short})`;
+      return `<option value="${f.n}">${label}</option>`;
+    }).join('');
   }
 
   tabSelect.addEventListener('change', populateFiles);
@@ -2582,9 +2812,16 @@ function generateBatch() {
   const file = files.find(f => String(f.n) === String(fileN));
   if (!file) return;
 
-  // Get 4 topics starting from startN
+  // Solo-only file types — cap batch to 1 prompt to enforce one-file-per-chat.
+  // F1 = gold-locked but kept for rare rebuilds. F2 = heavy 50-mark paper.
+  // F3/F4 = PPTX (token-heavy). F9 = drag-drop (interactive logic).
+  const SOLO_ONLY = tab === 'weekly' ? new Set([1, 2, 3, 4, 9]) : new Set();
+  const isSolo = SOLO_ONLY.has(file.n);
+
+  // Get topics starting from startN — 1 if solo, 4 otherwise
   const startIdx = TOPICS.findIndex(t => t.n === startN);
-  const batch = TOPICS.slice(startIdx, startIdx + 4);
+  const batchSize = isSolo ? 1 : 4;
+  const batch = TOPICS.slice(startIdx, startIdx + batchSize);
 
   if (batch.length === 0) {
     document.getElementById('batchResults').innerHTML =
@@ -2594,6 +2831,19 @@ function generateBatch() {
 
   const results = document.getElementById('batchResults');
   results.innerHTML = '';
+
+  // Solo-only banner (above summary)
+  if (isSolo) {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#FEF3C7;border:1px solid #F6D860;border-left:4px solid #B7791F;border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:#92400E;';
+    let reason = '';
+    if (file.n === 1) reason = 'F1 is gold-locked. Only generate this if you genuinely need to rebuild a vetted F1.';
+    else if (file.n === 2) reason = 'F2 worksheets are 12–16 pages with mark schemes — one per chat to maintain quality.';
+    else if (file.n === 3 || file.n === 4) reason = 'PPTX builds are token-heavy — one deck per chat.';
+    else if (file.n === 9) reason = 'F9 has more interactive logic than F6/F7/F8 — solo build only.';
+    banner.innerHTML = `<strong>⚠ Solo-only file type — capped to 1 prompt.</strong><br>${reason}<br>For HTML files F6/F7/F8: use the <strong>📦 Bundle</strong> button on each unit row to build all three in one chat.`;
+    results.appendChild(banner);
+  }
 
   // Header summary
   const summary = document.createElement('div');
@@ -2628,15 +2878,44 @@ function generateBatch() {
     results.appendChild(item);
   });
 
-  // Mark all in progress button
+  // Mark all in progress button + Copy All
   const footer = document.createElement('div');
-  footer.style.cssText = 'display:flex;gap:8px;align-items:center;margin-top:6px;';
+  footer.style.cssText = 'display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap;';
   footer.innerHTML = `
+    <button class="batch-copy-btn" id="bcopyAll" onclick="copyAllBatchPrompts(${batch.length})" style="background:var(--coral,#E8604C);">📋 Copy All ${batch.length} Prompts</button>
     <button class="batch-mark-all" onclick="markAllBatchProgress('${tab}','${fileN}',${batch.map(t=>t.n).join(',')})">
       🔄 Mark all ${batch.length} as In Progress
     </button>
-    <span style="font-size:11px;color:var(--light);">Update status after you've started each file</span>`;
+    <span style="font-size:11px;color:#C53030;font-weight:700;">⚠ ONE prompt per chat. Copy All gives you all 4 with separators — work through them in <em>separate</em> chats.</span>`;
   results.appendChild(footer);
+}
+
+function copyAllBatchPrompts(n) {
+  const parts = [];
+  for (let i = 0; i < n; i++) {
+    const el = document.getElementById(`bprompt-full-${i}`);
+    if (!el) continue;
+    const txt = el.textContent
+      .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+    parts.push(`══════════════════════════════════════════════════════════════════
+  ⚠ PROMPT ${i+1} of ${n} — PASTE INTO A FRESH CHAT BY ITSELF
+  ⚠ DO NOT paste multiple prompts into the same chat.
+══════════════════════════════════════════════════════════════════
+
+${txt}`);
+  }
+  const combined = parts.join('\n\n\n');
+  const btn = document.getElementById('bcopyAll');
+  navigator.clipboard.writeText(combined).then(() => {
+    btn.classList.add('copied');
+    btn.textContent = `✓ Copied ${n} prompts — paste each into its own chat`;
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.textContent = `📋 Copy All ${n} Prompts`;
+    }, 3500);
+  }).catch(() => {
+    alert('Copy failed — try the individual Copy buttons');
+  });
 }
 
 function copyBatchPrompt(idx) {
