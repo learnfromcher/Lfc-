@@ -92,7 +92,7 @@ body{font-family:'DM Sans',sans-serif;background:#F0F4F8;color:var(--dark);min-h
 .grid-table{border-collapse:separate;border-spacing:0;min-width:1000px;width:100%;}
 
 /* ── COLUMN HEADERS ── */
-.col-hdr{background:var(--dark);color:#fff;font-size:11px;font-weight:700;padding:10px 8px;text-align:center;letter-spacing:.3px;white-space:nowrap;border-bottom:2px solid var(--teal);position:sticky;top:58px;z-index:100;}
+.col-hdr{background:var(--dark);color:#fff;font-size:11px;font-weight:700;padding:10px 8px;text-align:center;letter-spacing:.3px;white-space:nowrap;border-bottom:2px solid var(--teal);}
 .col-hdr:first-child{text-align:left;padding-left:14px;min-width:200px;border-radius:10px 0 0 0;}
 .col-hdr:last-child{border-radius:0 10px 0 0;}
 .col-hdr .file-num{font-size:16px;display:block;margin-bottom:2px;}
@@ -229,12 +229,6 @@ td.cell.skip{background:repeating-linear-gradient(-45deg,#F0F4F8,#F0F4F8 4px,#E8
   .modal-hdr{border-radius:12px 12px 0 0;padding:14px 18px;}
   .batch-controls{flex-direction:column;}
   .batch-select{min-width:100%;}
-  /* v6 fix: on mobile, sticky col-hdr stacks under the page header and clips
-     the first topic row's name. Drop col-hdr sticky on phones — icons in each
-     cell already convey the file type, so the column header isn't needed pinned. */
-  .col-hdr{position:static!important;top:auto!important;}
-  /* Make sure topic-hdr cells aren't clipped under the page hdr if the user
-     uses anchor scroll — give some scroll-margin for safety. */
   .topic-hdr{scroll-margin-top:70px;}
 }
 
